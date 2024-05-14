@@ -12,34 +12,44 @@ html(lang="en")
             input(type="text", id="documento_paciente", name="documento_paciente", required)
           div
             button(type="submit") Buscar
-        h1 Actualizar Paciente
-        form(action="", method='POST')
-          div.form-group
-            label(for='nombre') Nombre:
-            input#nombre.form-control(type='text', name='nombre', required)
-          div.form-group
-            label(for='apellido') Apellido:
-            input#apellido.form-control(type='text', name='apellido', required)
-          div.form-group
-            label(for='documento') Documento:
-            input#documento.form-control(type='text', name='documento', required)
-          div.form-group
-            label(for='fecha_nac') Fecha de Nacimiento:
-            input#fecha_nac.form-control(type='date', name='fecha_nac', required)
-          div.form-group
-            label(for='sexo') Sexo:
-            select#sexo.form-control(name='sexo', required)
-              option(value='Masculino') Masculino
-              option(value='Femenino') Femenino
-          div.form-group
-            label(for='obra_social') Obra Social:
-            input#obra_social.form-control(type='text', name='obra_social', required)
-          div.form-group
-            label(for='plan') Plan:
-            input#plan.form-control(type='text', name='plan', required)
-          div.form-group
-            label(for='activo') Activo:
-            input#activo.form-check-input(type='checkbox', name='activo')
-            label.form-check-label(for='activo') Activo
-          
-          button.btn.btn-primary(type='submit') Actualizar
+        if paciente
+          h1 Paciente
+          ul
+            li Nombre: #{paciente.nombre_paciente}
+            li Apellido: #{paciente.apellido_paciente}
+            li Documento: #{paciente.documento_paciente}
+            li Sexo: #{paciente.sexo_paciente}
+            li Fecha de Nacimiento: #{paciente.fecha_nac}
+            li Obra Social: #{paciente.obra_social}
+        else
+          div
+            p #{message}
+        if paciente
+          h1 Actualizar Paciente
+          form(action="/paciente/actualizar-paciente", method='PUT')
+            div.form-group
+              label(for='nombre') Nombre:
+              input#nombre.form-control(type='text', name='nombre_paciente', value=paciente ? paciente.nombre_paciente : '', required)
+            div.form-group
+              label(for='apellido') Apellido:
+              input#apellido.form-control(type='text', name='apellido_paciente', value=paciente ? paciente.apellido_paciente : '', required)
+            div.form-group
+              label(for='documento') Documento:
+              input#documento.form-control(type='text', name='documento_paciente', value=paciente ? paciente.documento_paciente : '', required)
+            div.form-group
+              label(for='fecha_nac') Fecha de Nacimiento:
+              input#fecha_nac.form-control(type='date', name='fecha_nac', value=paciente.fecha_nac.toISOString().substring(0, 10), required)
+            div.form-group
+              label(for='sexo') Sexo:
+              select#sexo.form-control(name='sexo_paciente', required)
+                option(value='Masculino' selected=paciente.sexo_paciente === 'Masculino') Masculino
+                option(value='Femenino' selected=paciente.sexo_paciente === 'Mujer') Femenino
+                option(value='Otro' selected=paciente.sexo_paciente !== 'Masculino' && paciente.sexo_paciente !== 'Mujer') Otro
+            div.form-group
+              label(for='obra_social') Obra Social:
+              input#obra_social.form-control(type='text', name='obra_social', value=paciente ? paciente.obra_social : '', required)
+            div.form-group
+              label(for='plan') Plan:
+              input#plan.form-control(type='text', name='plan', value=paciente ? paciente.plan : '' required)
+
+            button.btn.btn-primary(type='submit') Actualizar

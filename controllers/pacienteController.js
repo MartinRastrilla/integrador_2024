@@ -35,9 +35,10 @@ exports.buscarPacienteByDNI = async (req,res) => {
         const { documento_paciente }= req.query;
         const paciente = await Paciente.findOne({ where: { documento_paciente } });
         if (!paciente) {
-            return res.status(404).json({message:'Paciente no encontrado.'});
+            const message = "Paciente no Encontrado."
+            return res.render('pages/paciente', {message});
         }
-        res.status(200).json(paciente);
+        res.render('pages/paciente', {paciente});
     } catch (error) {
         console.error('Error al obtener paciente por ID:', error);
         res.status(500).json({ message: "Error al obtener paciente por ID" });
@@ -46,21 +47,19 @@ exports.buscarPacienteByDNI = async (req,res) => {
 
 exports.actualizarPaciente = async (req, res) => {
     try {
-        const {documento} = req.params;
-        const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan, activo } = req.body;
-        const paciente = await Paciente.findByPk(documento);
+        const { documento_paciente } = req.query.documento_paciente;
+        const { nombre_paciente, apellido_paciente, fecha_nac, sexo_paciente, obra_social, plan } = req.body;
+        const paciente = await Paciente.findOne({ where: { documento_paciente } });
         if (!paciente) {
             return res.status(404).json({ message: "Paciente no encontrado" });
         }
         await Paciente.update({
             nombre_paciente,
             apellido_paciente,
-            documento_paciente,
             fecha_nac,
             sexo_paciente,
             obra_social,
-            plan,
-            activo
+            plan
         });
         res.status(200).json({paciente, message: "Paciente Actualizado Exitosamente"});
     } catch (error) {

@@ -9,5 +9,6 @@ router.get('/buscar', (req,res) => {
 router.get('/', pacienteControl.obtenerPacientes);
 router.get('/buscar-por-documento', pacienteControl.buscarPacienteByDNI);
 router.post('/create', pacienteControl.createPaciente);
+router.put('/actualizar-paciente', pacienteControl.actualizarPaciente);
 
 module.exports = router;
