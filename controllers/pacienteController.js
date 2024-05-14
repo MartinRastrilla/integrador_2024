@@ -1,33 +1,69 @@
-const db = require('../config/database');
+const Paciente = require('../models/pacienteModel');
 
-exports.getPacientes = (req, res) => {
-    db.query('SELECT * FROM paciente', (error, result) => {
-        if (error) {
-            console.error('Error al obtener pacientes', error);
-            res.status(500).json({ message: 'Hubo un error al obtener los pacientes' });
-            return;
-        }
-        res.json(result);
-    });
+exports.createPaciente = async (req, res) => {
+    try {
+      const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan, activo } = req.body;
+      const paciente = await Paciente.create({
+        nombre_paciente,
+        apellido_paciente,
+        documento_paciente,
+        fecha_nac,
+        sexo_paciente,
+        obra_social,
+        plan,
+        activo
+      });
+      res.status(201).json({ paciente, message: "Paciente creado exitosamente" });
+    } catch (error) {
+      console.error('Error al crear paciente:', error);
+      res.status(500).json({ message: "Error al crear paciente" });
+    }
 };
 
-exports.getPacienteByDNI = (req,res) => {
-    const documento_paciente = req.params.dni;
-    console.log(req);
-    db.query('SELECT* FROM paciente WHERE documento_paciente = ?', [documento_paciente], (error, result) => {
-        if (error) {
-            console.error('Error al obtener al paciente', error);
-            res.status(500).json({ message: 'Hubo un error al obtener al paciente' });
-            return;
-        }
-        if (result.length === 0) {
-            res.status(404).json({ message: 'Paciente no encontrado' });
-            return;
-        }
-        res.json(result[0]);
-    });
+exports.obtenerPacientes = async (req,res) => {
+    try {
+        const pacientes = await Paciente.findAll();
+        res.status(200).json(pacientes);
+    } catch (error) {
+        console.error('Error al buscar pacientes.', error);
+        res.status(500).json({message:'Error al buscar pacientes.'});
+    }
 };
 
-exports.postPaciente = (req,res) => {
-
+exports.buscarPacienteByDNI = async (req,res) => {
+    try {
+        const { documento_paciente }= req.query;
+        const paciente = await Paciente.findOne({ where: { documento_paciente } });
+        if (!paciente) {
+            return res.status(404).json({message:'Paciente no encontrado.'});
+        }
+        res.status(200).json(paciente);
+    } catch (error) {
+        console.error('Error al obtener paciente por ID:', error);
+        res.status(500).json({ message: "Error al obtener paciente por ID" });
+    }
 };
+
+exports.actualizarPaciente = async (req, res) => {
+    try {
+        const {documento_paciente} = req.params;
+        const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan, activo } = req.body;
+        const paciente = await Paciente.findByPk(documento_paciente);
+        if (!paciente) {
+            return res.status(404).json({ message: "Paciente no encontrado" });
+        }
+        await Paciente.update({
+            nombre_paciente,
+            apellido_paciente,
+            documento_paciente,
+            fecha_nac,
+            sexo_paciente,
+            obra_social,
+            plan,
+            activo
+        });
+        
+    } catch (error) {
+        
+    }
+}
