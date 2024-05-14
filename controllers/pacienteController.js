@@ -46,9 +46,9 @@ exports.buscarPacienteByDNI = async (req,res) => {
 
 exports.actualizarPaciente = async (req, res) => {
     try {
-        const {documento_paciente} = req.params;
+        const {documento} = req.params;
         const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan, activo } = req.body;
-        const paciente = await Paciente.findByPk(documento_paciente);
+        const paciente = await Paciente.findByPk(documento);
         if (!paciente) {
             return res.status(404).json({ message: "Paciente no encontrado" });
         }
@@ -62,8 +62,9 @@ exports.actualizarPaciente = async (req, res) => {
             plan,
             activo
         });
-        
+        res.status(200).json({paciente, message: "Paciente Actualizado Exitosamente"});
     } catch (error) {
-        
+        console.error('Error al Actualizar Paciente:', error);
+        res.status(500).json({message: "Error al actualizar paciente"});
     }
-}
+};

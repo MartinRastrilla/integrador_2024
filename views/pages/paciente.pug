@@ -12,3 +12,34 @@ html(lang="en")
             input(type="text", id="documento_paciente", name="documento_paciente", required)
           div
             button(type="submit") Buscar
+        h1 Actualizar Paciente
+        form(action="", method='POST')
+          div.form-group
+            label(for='nombre') Nombre:
+            input#nombre.form-control(type='text', name='nombre', required)
+          div.form-group
+            label(for='apellido') Apellido:
+            input#apellido.form-control(type='text', name='apellido', required)
+          div.form-group
+            label(for='documento') Documento:
+            input#documento.form-control(type='text', name='documento', required)
+          div.form-group
+            label(for='fecha_nac') Fecha de Nacimiento:
+            input#fecha_nac.form-control(type='date', name='fecha_nac', required)
+          div.form-group
+            label(for='sexo') Sexo:
+            select#sexo.form-control(name='sexo', required)
+              option(value='Masculino') Masculino
+              option(value='Femenino') Femenino
+          div.form-group
+            label(for='obra_social') Obra Social:
+            input#obra_social.form-control(type='text', name='obra_social', required)
+          div.form-group
+            label(for='plan') Plan:
+            input#plan.form-control(type='text', name='plan', required)
+          div.form-group
+            label(for='activo') Activo:
+            input#activo.form-check-input(type='checkbox', name='activo')
+            label.form-check-label(for='activo') Activo
+          
+          button.btn.btn-primary(type='submit') Actualizar
