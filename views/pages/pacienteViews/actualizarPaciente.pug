@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Editar Paciente
+    body
+        h1= create ? 'Crear Nuevo Paciente' : 'Actualizar Paciente'
+        form(action=`/paciente/${create ? 'crear' : 'editar'}/${paciente.id_paciente}`, method='PUT')
+          input(type='text', name='nombre_paciente', value=paciente ? paciente.nombre_paciente : '', placeholder='Nombre', required)
+          input(type='text', name='apellido_paciente', value=paciente ? paciente.apellido_paciente : '', placeholder='Apellido', required)
+          input(type='text', name='documento_paciente', value=paciente ? paciente.documento_paciente : '', placeholder='Documento', required)
+          input(type='date', name='fecha_nac', value=paciente.fecha_nac.toISOString().substring(0, 10), placeholder='Fecha de Nacimiento', required)
+          select(name='sexo_paciente', required)
+            option(value='Masculino' selected=paciente.sexo_paciente === 'Masculino') Masculino
+            option(value='Femenino' selected=paciente.sexo_paciente === 'Mujer') Femenino
+            option(value='Otro' selected=paciente.sexo_paciente !== 'Masculino' && paciente.sexo_paciente !== 'Mujer') Otro
+          input(type='text', name='obra_social', value=paciente ? paciente.obra_social : '', placeholder='Obra Social', required)
+          input(type='text', name='plan', value=paciente ? paciente.plan : '', placeholder='Plan', required)
+          button(type='submit')= create ? 'Crear' : 'Actualizar'

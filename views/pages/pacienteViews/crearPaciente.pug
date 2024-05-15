@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Crear Paciente
+    body
+        h1= create ? 'Crear Nuevo Paciente' : 'Actualizar Paciente'
+        form(action=`/paciente/${create ? 'crear' : 'actualizar'}`, method='POST')
+          input(type='text', name='nombre_paciente', placeholder='Nombre', required)
+          input(type='text', name='apellido_paciente', placeholder='Apellido', required)
+          input(type='text', name='documento_paciente', placeholder='Documento', required)
+          input(type='date', name='fecha_nac', placeholder='Fecha de Nacimiento', required)
+          select(name='sexo_paciente', required)
+            option(value='Masculino') Masculino
+            option(value='Femenino') Femenino
+            option(value='Otro') Otro
+          input(type='text', name='obra_social', placeholder='Obra Social', required)
+          input(type='text', name='plan', placeholder='Plan', required)
+          button(type='submit')= create ? 'Crear' : 'Actualizar'

@@ -5,8 +5,32 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Paciente
     body
+        a(href="/paciente/crear") Crear Nuevo Paciente
+        h1 Pacientes:
+        table
+          thead 
+            tr
+              th Nombre
+              th Apellido
+              th Documento
+              th Fecha de Nacimiento
+              th Sexo
+              th Obra Social
+              th Plan
+          tbody
+            each paciente in pacientes
+              tr
+                td= paciente.nombre_paciente
+                td= paciente.apellido_paciente
+                td= paciente.documento_paciente
+                td= paciente.fecha_nac.toISOString().substring(0, 10)
+                td= paciente.sexo_paciente
+                td= paciente.obra_social
+                td= paciente.plan
+                td
+                  a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
         h1 Buscar Paciente por DNI
-        form(action="/paciente/buscar-por-documento", method="GET")
+        form(action="/paciente/details", method="GET")
           div
             label(for="documento_paciente") Ingrese el DNI del paciente:
             input(type="text", id="documento_paciente", name="documento_paciente", required)
@@ -26,7 +50,7 @@ html(lang="en")
             p #{message}
         if paciente
           h1 Actualizar Paciente
-          form(action="/paciente/actualizar-paciente", method='PUT')
+          form(action=`/paciente/details/${paciente.documento_paciente}`, method='PUT')
             div.form-group
               label(for='nombre') Nombre:
               input#nombre.form-control(type='text', name='nombre_paciente', value=paciente ? paciente.nombre_paciente : '', required)
@@ -51,5 +75,5 @@ html(lang="en")
             div.form-group
               label(for='plan') Plan:
               input#plan.form-control(type='text', name='plan', value=paciente ? paciente.plan : '' required)
-
-            button.btn.btn-primary(type='submit') Actualizar
+            div
+              button(type='submit') Actualizar
