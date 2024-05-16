@@ -8,10 +8,10 @@ router.get('/crear', async(req,res)=>{
 });
 router.post('/crear', pacienteControl.createPaciente);
 
+router.put('/editar/:id_paciente', pacienteControl.actualizarPaciente);
 router.get('/editar/:id_paciente', pacienteControl.mostrarEditarPaciente);
 
 router.get('/', pacienteControl.obtenerPacientes);
 router.get('/details', pacienteControl.buscarPacienteByDNI);
-router.put('/details/actualizar/:documento_paciente', pacienteControl.actualizarPaciente);
 
 module.exports = router;

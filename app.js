@@ -4,7 +4,9 @@ const path = require('path');
 const dotenv = require('dotenv');
 const PORT = 3000;
 const app = express();
+const Medico = require('./models/medicoModel');
 const Paciente = require('./models/pacienteModel');
+const Medicamento = require('./models/medicamentoModel');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON

@@ -57,15 +57,16 @@ exports.mostrarEditarPaciente = async (req,res) => {
 
 exports.actualizarPaciente = async (req, res) => {
     try {
-        const { documento_paciente } = req.params;
-        const { nombre_paciente, apellido_paciente, fecha_nac, sexo_paciente, obra_social, plan } = req.body;
-        const paciente = await Paciente.findOne({ where: { documento_paciente } });
+        const { id_paciente } = req.params;
+        const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan } = req.body;
+        const paciente = await Paciente.findByPk(id_paciente);
         if (!paciente) {
             return res.status(404).json({ message: "Paciente no encontrado" });
         }
-        await Paciente.update({
+        await paciente.update({
             nombre_paciente,
             apellido_paciente,
+            documento_paciente,
             fecha_nac,
             sexo_paciente,
             obra_social,
