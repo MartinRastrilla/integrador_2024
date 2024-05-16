@@ -21,16 +21,19 @@ html(lang="en")
               th Plan
           tbody
             each paciente in pacientes
-              tr
-                td= paciente.nombre_paciente
-                td= paciente.apellido_paciente
-                td= paciente.documento_paciente
-                td= paciente.fecha_nac.toISOString().substring(0, 10)
-                td= paciente.sexo_paciente
-                td= paciente.obra_social
-                td= paciente.plan
-                td
-                  a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
+              - if (paciente.activo)
+                tr
+                  td= paciente.nombre_paciente
+                  td= paciente.apellido_paciente
+                  td= paciente.documento_paciente
+                  td= paciente.fecha_nac.toISOString().substring(0, 10)
+                  td= paciente.sexo_paciente
+                  td= paciente.obra_social
+                  td= paciente.plan
+                  td
+                    a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
+                    form(action=`/paciente/${paciente.id_paciente}`, method="delete")
+                      button(type="submit") Eliminar
         h1 Buscar Paciente por DNI
         form(action="/paciente/details", method="GET")
           div

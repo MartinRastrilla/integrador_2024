@@ -78,3 +78,18 @@ exports.actualizarPaciente = async (req, res) => {
         res.status(500).json({message: "Error al actualizar paciente"});
     }
 };
+
+exports.borrarPaciente = async (req,res) =>{
+    try {
+        const { id_paciente } = req.params;
+        const paciente = await Paciente.findByPk(id_paciente);
+        if (!paciente) {
+            res.status(404).json({message:'no se encontró paciente.'});
+        }
+        await Paciente.update({activo:false}, {where: {id_paciente}});
+        res.status(200).json({message:'Paciente Eliminado.'});
+    } catch (error) {
+        console.error('Error al borrar paciente: ', error);
+        res.status(500).json({message:'Error al borrar paciente'});
+    }
+};

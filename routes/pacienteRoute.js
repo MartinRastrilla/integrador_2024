@@ -8,8 +8,10 @@ router.get('/crear', async(req,res)=>{
 });
 router.post('/crear', pacienteControl.createPaciente);
 
-router.put('/editar/:id_paciente', pacienteControl.actualizarPaciente);
+router.post('/editar/:id_paciente', pacienteControl.actualizarPaciente);
 router.get('/editar/:id_paciente', pacienteControl.mostrarEditarPaciente);
+
+router.delete('/:id_paciente', pacienteControl.borrarPaciente);
 
 router.get('/', pacienteControl.obtenerPacientes);
 router.get('/details', pacienteControl.buscarPacienteByDNI);

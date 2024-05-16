@@ -7,7 +7,7 @@ html(lang="en")
     body
         a(href="/paciente") Volver 
         h1= create ? 'Crear Nuevo Paciente' : 'Actualizar Paciente'
-        form(action=`/paciente/editar/${paciente.id_paciente}`, method='PUT')
+        form(action=`/paciente/editar/${paciente.id_paciente}`, method='POST')
           input(type='text', name='nombre_paciente', value=paciente ? paciente.nombre_paciente : '', placeholder='Nombre', required)
           input(type='text', name='apellido_paciente', value=paciente ? paciente.apellido_paciente : '', placeholder='Apellido', required)
           input(type='text', name='documento_paciente', value=paciente ? paciente.documento_paciente : '', placeholder='Documento', required)

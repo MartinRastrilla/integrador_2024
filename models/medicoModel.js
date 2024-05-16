@@ -35,12 +35,12 @@ const Medico = sequelize.define('Medico', {
   },
   domicilio: {
     type: DataTypes.STRING(80),
-    allowNull: true
+    allowNull: false
   },
   matricula: {
     type: DataTypes.STRING(20),
     unique: true,
-    allowNull: true
+    allowNull: false
   },
   caducidad: {
     type: DataTypes.DATE,
@@ -48,7 +48,8 @@ const Medico = sequelize.define('Medico', {
   },
   activo: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: true,
+    allowNull: false
   }
 });
 

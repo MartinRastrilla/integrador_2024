@@ -22,9 +22,13 @@ app.set('views', path.join(__dirname, 'views'));
 //REQUIRES ROUTES
 const indexRouter = require('./routes/index');
 const pacienteRouter = require('./routes/pacienteRoute');
+const medicoRouter = require('./routes/medicoRoute');
+const medicamentoRouter = require('./routes/medicamentoRoute');
 
 //RUTAS
 app.use('/paciente', pacienteRouter);
+app.use('/medico', medicoRouter);
+app.use('/medicamento', medicamentoRouter);
 app.use('/', indexRouter);
 
 //SINCRONIZACIÓN DE TABLAS

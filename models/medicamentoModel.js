@@ -1,4 +1,4 @@
-const { DataTypes } = require('sequelize');
+const {DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
 
 const Medicamento = sequelize.define('Medicamento',{
@@ -11,17 +11,17 @@ const Medicamento = sequelize.define('Medicamento',{
     nombre_generico: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true,
+      unique: false,
     },
     concentracion: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true,
+      unique: false,
     },
     forma_farmaceutica: {
       type: DataTypes.STRING(20),
       allowNull: false,
-      unique: true,
+      unique: false,
     },
     cant_u: {
       type: DataTypes.INTEGER,
@@ -51,4 +51,4 @@ const Medicamento = sequelize.define('Medicamento',{
   }
 );
 
-exports.modules = Medicamento;
+module.exports = Medicamento;
