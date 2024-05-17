@@ -28,12 +28,6 @@ const Paciente = sequelize.define('Paciente',{
         type: DataTypes.STRING(30),
         allowNull: false
       },
-      obra_social: {
-        type: DataTypes.STRING(30)
-      },
-      plan: {
-        type: DataTypes.STRING(30)
-      },
       activo: {
         type: DataTypes.BOOLEAN,
         allowNull: false,

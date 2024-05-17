@@ -72,7 +72,7 @@ exports.actualizarPaciente = async (req, res) => {
             obra_social,
             plan
         });
-        res.status(200).json({paciente, message: "Paciente Actualizado Exitosamente"});
+        res.redirect('/paciente');
     } catch (error) {
         console.error('Error al Actualizar Paciente:', error);
         res.status(500).json({message: "Error al actualizar paciente"});
@@ -87,7 +87,7 @@ exports.borrarPaciente = async (req,res) =>{
             res.status(404).json({message:'no se encontró paciente.'});
         }
         await Paciente.update({activo:false}, {where: {id_paciente}});
-        res.status(200).json({message:'Paciente Eliminado.'});
+        res.redirect('/paciente');
     } catch (error) {
         console.error('Error al borrar paciente: ', error);
         res.status(500).json({message:'Error al borrar paciente'});

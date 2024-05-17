@@ -32,7 +32,7 @@ html(lang="en")
                   td= paciente.plan
                   td
                     a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
-                    form(action=`/paciente/${paciente.id_paciente}`, method="delete")
+                    form(action=`/paciente/${paciente.id_paciente}`, method="POST")
                       button(type="submit") Eliminar
         h1 Buscar Paciente por DNI
         form(action="/paciente/details", method="GET")
