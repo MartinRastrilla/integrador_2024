@@ -3,10 +3,10 @@ const router = express.Router();
 const pacienteControl = require('../controllers/pacienteController');
 
 //CRUD PACIENTE
-router.get('/crear', async(req,res)=>{
-    res.render('pages/pacienteViews/crearPaciente', {create:true});
-});
+router.get('/crear', pacienteControl.mostrarCrearPaciente);
 router.post('/crear', pacienteControl.createPaciente);
+
+router.get('/planes/:id_os', pacienteControl.obtenerPlanesPorOS);
 
 router.post('/editar/:id_paciente', pacienteControl.actualizarPaciente);
 router.get('/editar/:id_paciente', pacienteControl.mostrarEditarPaciente);

@@ -1,26 +1,16 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
+const User = require('./userModel');
 
-const Medico = sequelize.define('Medico', {
-  id_medico: {
+const Profesional = sequelize.define('Profesional', {
+  id_user: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+    references: {
+      model: User,
+      key: 'id_user'
+    }
   },
   id_refeps: {
-    type: DataTypes.INTEGER,
-    unique: true,
-    allowNull: false
-  },
-  nombre_medico: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  apellido_medico: {
-    type: DataTypes.STRING(30),
-    allowNull: false
-  },
-  documento_medico: {
     type: DataTypes.INTEGER,
     unique: true,
     allowNull: false
@@ -53,4 +43,4 @@ const Medico = sequelize.define('Medico', {
   }
 });
 
-module.exports = Medico; 
+module.exports = Profesional; 

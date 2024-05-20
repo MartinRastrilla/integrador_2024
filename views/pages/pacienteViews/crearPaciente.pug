@@ -4,6 +4,7 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Crear Paciente
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
     body
         h1= create ? 'Crear Nuevo Paciente' : 'Actualizar Paciente'
         form(action=`/paciente/${create ? 'crear' : 'actualizar'}`, method='POST')
@@ -15,6 +16,37 @@ html(lang="en")
             option(value='Masculino') Masculino
             option(value='Femenino') Femenino
             option(value='Otro') Otro
-          input(type='text', name='obra_social', placeholder='Obra Social', required)
-          input(type='text', name='plan', placeholder='Plan', required)
+          label(for="obraSocialSelect") Obra Social
+          select#obraSocialSelect(name="id_os")  
+            option(value="") Seleccione una obra social
+              each os in obras_sociales
+                option(value=os.id_os) #{os.nombre_os}
+          label(for="planSelect") Plan
+          select#planSelect(name="id_plan") 
+            option(value="") Seleccione un plan
           button(type='submit')= create ? 'Crear' : 'Actualizar'
+        script.
+          $(document).ready(function() {
+            $('#obraSocialSelect').change(function() {
+              const obraSocialID = $(this).val();
+              if (obraSocialID) {
+                $.ajax({
+                  url: `/paciente/planes/${obraSocialID}`,
+                  method: 'GET',
+                  success: function(data) {
+                    $('#planSelect').empty();
+                    $('#planSelect').append(new Option('Selecciona un plan', ''));
+                    data.forEach(plan => {
+                      $('#planSelect').append(new Option(plan.plan, plan.id_plan));
+                    });
+                  },
+                  error: function(err) {
+                    console.error('Error al obtener los planes: ', err);
+                  }
+                });
+              } else {
+                $('#planSelect').empty();
+                $('#planSelect').append(new Option('Seleccione un plan', ''));
+              }
+            });
+          });

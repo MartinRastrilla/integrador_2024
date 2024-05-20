@@ -1,4 +1,35 @@
 const Paciente = require('../models/pacienteModel');
+const ObraSocial = require ('../models/obrasocialModel');
+const Plan = require('../models/planModel');
+const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
+
+exports.mostrarCrearPaciente = async (req,res) => {
+    try {
+        const obras_sociales = await ObraSocial.findAll( { where: {activo:true} } );
+        //const planes = await Plan.findAll
+        res.render('pages/pacienteViews/crearPaciente', {obras_sociales, create:true});
+    } catch (error) {
+        console.error('Error al mostrar la creación de Pacientes: ', error);
+        res.status(500).json({message: "Error al mostrar 'Crear'"});
+    }
+};
+
+exports.obtenerPlanesPorOS = async (req,res) => {
+    try {
+        const {id_os} = req.params;
+        const obraSocial = await ObraSocial.findByPk(id_os, {
+            include: {
+                model: Plan,
+                through: { attributes: [] }
+            }
+        });
+        const planes = obraSocial ? obraSocial.Plans : [];
+        res.json(planes);
+    } catch (error) {
+        console.error('Error al obtener planes: ', error);
+        res.status(500).json({message: 'Error al obtener planes'});
+    }
+};
 
 exports.createPaciente = async (req, res) => {
     try {
@@ -8,9 +39,7 @@ exports.createPaciente = async (req, res) => {
         apellido_paciente,
         documento_paciente,
         fecha_nac,
-        sexo_paciente,
-        obra_social,
-        plan
+        sexo_paciente
       });
       res.redirect('/paciente');
     } catch (error) {

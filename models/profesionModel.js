@@ -1,13 +1,13 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const ObraSocial = sequelize.define('ObraSocial', {
-    id_os: {
+const Profesion = sequelize.define('Profesion', {
+    id_profesion: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    nombre_os: {
+    nombre_profesion: {
         type: DataTypes.STRING(30),
         allowNull: false,
         unique: true
@@ -18,7 +18,7 @@ const ObraSocial = sequelize.define('ObraSocial', {
         defaultValue: true
     }
 },{
-    tableName:'ObrasSociales'
+    tableName:'Profesiones'
 });
 
-module.exports = ObraSocial;
+module.exports = Profesion;

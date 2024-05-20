@@ -4,13 +4,25 @@ const path = require('path');
 const dotenv = require('dotenv');
 const PORT = 3000;
 const app = express();
-const Medico = require('./models/medicoModel');
+
+const User = require('./models/userModel');
+const Rol = require('./models/rolModel');
+const UserRol = require('./models/userRolModel');
+
+const Profesional = require('./models/profesionalModel');
+const Profesion = require('./models/profesionModel');
+const Especialidad = require('./models/especialidadModel');
+const Profesion_especialidad = require('./models/profesion_especialidad_Model');
+const Profesional_profesion_especilidad = require('./models/profesional_profesion_especialidad_mode');
+
 const Paciente = require('./models/pacienteModel');
-const Medicamento = require('./models/medicamentoModel');
 const ObraSocial = require('./models/obrasocialModel');
 const Plan = require('./models/planModel');
 const ObraSocial_Plan = require('./models/obraSocial_Plan_Model');
 const Paciente_ObraSocial_Plan = require('./models/paciente_obra_plan_Model');
+
+const Medicamento = require('./models/medicamentoModel');
+
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON
@@ -26,13 +38,9 @@ app.set('views', path.join(__dirname, 'views'));
 //REQUIRES ROUTES
 const indexRouter = require('./routes/index');
 const pacienteRouter = require('./routes/pacienteRoute');
-const medicoRouter = require('./routes/medicoRoute');
-const medicamentoRouter = require('./routes/medicamentoRoute');
 
 //RUTAS
 app.use('/paciente', pacienteRouter);
-app.use('/medico', medicoRouter);
-app.use('/medicamento', medicamentoRouter);
 app.use('/', indexRouter);
 
 //SINCRONIZACIÓN DE TABLAS
