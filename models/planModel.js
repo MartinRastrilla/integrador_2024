@@ -1,22 +1,28 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database'); // Asegúrate de tener tu configuración de Sequelize correctamente
 
-const ObraSocial = sequelize.define('obras_sociale', {
-    id_os: {
+const Plan = sequelize.define('Plan', {
+    id_plan: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    nombre_os: {
+    plan: {
         type: DataTypes.STRING(30),
         allowNull: false,
         unique: true
     },
+    detalle: {
+        type: DataTypes.STRING(250),
+        allowNull: false
+    },
     activo: {
         type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true
+        defaultValue: true,
+        allowNull: false
     }
+}, {
+    tableName: 'Planes'
 });
 
-module.exports = ObraSocial;
+module.exports = Plan;

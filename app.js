@@ -7,8 +7,10 @@ const app = express();
 const Medico = require('./models/medicoModel');
 const Paciente = require('./models/pacienteModel');
 const Medicamento = require('./models/medicamentoModel');
-const ObraSocial = require('./models/pacienteobrasocialModel');
-const Plan = require('./models/pacientePlanModel');
+const ObraSocial = require('./models/obrasocialModel');
+const Plan = require('./models/planModel');
+const ObraSocial_Plan = require('./models/obraSocial_Plan_Model');
+const Paciente_ObraSocial_Plan = require('./models/paciente_obra_plan_Model');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON
