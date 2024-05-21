@@ -2,11 +2,12 @@ const Paciente = require('../models/pacienteModel');
 const ObraSocial = require ('../models/obrasocialModel');
 const Plan = require('../models/planModel');
 const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
+const Paciente_ObraSocial_Plan = require('../models/paciente_obra_plan_Model');
+const sequelize = require('../config/database');
 
 exports.mostrarCrearPaciente = async (req,res) => {
     try {
         const obras_sociales = await ObraSocial.findAll( { where: {activo:true} } );
-        //const planes = await Plan.findAll
         res.render('pages/pacienteViews/crearPaciente', {obras_sociales, create:true});
     } catch (error) {
         console.error('Error al mostrar la creación de Pacientes: ', error);
@@ -19,7 +20,7 @@ exports.obtenerPlanesPorOS = async (req,res) => {
         const {id_os} = req.params;
         const obraSocial = await ObraSocial.findByPk(id_os, {
             include: {
-                model: Plan,
+               model: Plan,
                 through: { attributes: [] }
             }
         });
@@ -32,26 +33,40 @@ exports.obtenerPlanesPorOS = async (req,res) => {
 };
 
 exports.createPaciente = async (req, res) => {
+    const transaction = await sequelize.transaction();
     try {
-      const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan } = req.body;
+      const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, id_os, id_plan } = req.body;
       const paciente = await Paciente.create({
         nombre_paciente,
         apellido_paciente,
         documento_paciente,
         fecha_nac,
         sexo_paciente
-      });
+      },{transaction});
+      const paciente_os_plan = await Paciente_ObraSocial_Plan.create({
+        id_paciente: paciente.id_paciente,
+        id_os,
+        id_plan
+      }, {transaction});
+      await transaction.commit();
       res.redirect('/paciente');
     } catch (error) {
-      console.error('Error al crear paciente:', error);
-      res.status(500).json({ message: "Error al crear paciente" });
+        await transaction.rollback();
+        console.error('Error al crear paciente:', error);
+        res.status(500).json({ message: "Error al crear paciente" });
     }
 };
 
 exports.obtenerPacientes = async (req,res) => {
     try {
         const pacientes = await Paciente.findAll();
-        res.render('pages/pacienteViews/paciente', {pacientes});
+        const paciente_os_plan = await Paciente_ObraSocial_Plan.findAll({
+            include:[
+            {model: ObraSocial},
+            {model: Plan}
+            ]
+        });
+        res.render('pages/pacienteViews/paciente', {pacientes, paciente_os_plan});
     } catch (error) {
         console.error('Error al buscar pacientes.', error);
         res.status(500).json({message:'Error al buscar pacientes.'});

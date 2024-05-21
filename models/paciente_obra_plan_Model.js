@@ -45,4 +45,8 @@ ObraSocial.belongsToMany(Paciente, { through: Paciente_ObraSocial_Plan, foreignK
 ObraSocial.belongsToMany(Plan, { through: ObraSocial_Plan, foreignKey: 'id_os' });
 Plan.belongsToMany(ObraSocial, { through: ObraSocial_Plan, foreignKey: 'id_plan' });
 
+Paciente_ObraSocial_Plan.belongsTo(Paciente, { foreignKey: 'id_paciente' });
+Paciente_ObraSocial_Plan.belongsTo(ObraSocial, { foreignKey: 'id_os' });
+Paciente_ObraSocial_Plan.belongsTo(Plan, { foreignKey: 'id_plan' });
+
 module.exports = Paciente_ObraSocial_Plan;
