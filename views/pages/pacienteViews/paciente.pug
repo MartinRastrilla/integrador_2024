@@ -21,26 +21,18 @@ html(lang="en")
               th Plan
           tbody
             each paciente in pacientes
-              - if (paciente.activo)
-                tr
-                  td= paciente.nombre_paciente
-                  td= paciente.apellido_paciente
-                  td= paciente.documento_paciente
-                  td= paciente.fecha_nac.toISOString().substring(0, 10)
-                  td= paciente.sexo_paciente
-                  each p_os_p in Paciente_ObraSocial_Plan
-                    - if (paciente.id_paciente === p_os_p.id_paciente)
-                      - const obraSocial = p_os_p.ObraSocial.id_os
-                      - const plan = p_os_p.Plan.id_plan
-                    td= obraSocial ? obraSocial.nombre_os : 'N/A'
-                    td= plan ? plan.plan : 'N/A
-                  else
-                   td N/A
-                   td N/A
-                  td
-                    a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
-                    form(action=`/paciente/${paciente.id_paciente}`, method="POST")
-                      button(type="submit") Eliminar
+              tr
+                td= paciente.nombre_paciente
+                td= paciente.apellido_paciente
+                td= paciente.documento_paciente
+                td= paciente.fecha_nac.toISOString().substring(0, 10)
+                td= paciente.sexo_paciente
+                td= paciente.nombre_os || 'N/A'
+                td= paciente.plan || 'N/A'
+                td
+                  a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
+                  form(action=`/paciente/${paciente.id_paciente}`, method="POST")
+                    button(type="submit") Eliminar
         h1 Buscar Paciente por DNI
         form(action="/paciente/details", method="GET")
           div

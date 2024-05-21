@@ -16,6 +16,30 @@ html(lang="en")
             option(value='Masculino' selected=paciente.sexo_paciente === 'Masculino') Masculino
             option(value='Femenino' selected=paciente.sexo_paciente === 'Mujer') Femenino
             option(value='Otro' selected=paciente.sexo_paciente !== 'Masculino' && paciente.sexo_paciente !== 'Mujer') Otro
-          input(type='text', name='obra_social', value=paciente ? paciente.obra_social : '', placeholder='Obra Social', required)
-          input(type='text', name='plan', value=paciente ? paciente.plan : '', placeholder='Plan', required)
+          select(name='id_os', id='obraSocialSelect', required)
+            each obraSocial in obrasSociales
+              option(value=obraSocial.id_os, selected=(relacionesDetalladas.length > 0 && relacionesDetalladas[0].id_os === obraSocial.id_os))= obraSocial.nombre_os
+          select(name='id_plan', id='planSelect', required)
+            each plan in relacionesDetalladas[0].obraSocial ? relacionesDetalladas[0].obraSocial.Plans : []
+              option(value=plan.id_plan, selected=(relacionesDetalladas.length > 0 && relacionesDetalladas[0].id_plan === plan.id_plan))= plan.plan
+
           button(type='submit') Actualizar
+
+          script.
+            document.getElementById('obraSocialSelect').addEventListener('change', function() {
+              const obraSocialId = this.value;
+              const planSelect = document.getElementById('planSelect');
+              const obrasSociales = !{JSON.stringify(obrasSociales)};
+              const selectedObraSocial = obrasSociales.find(os => os.id_os == obraSocialId);
+
+              planSelect.innerHTML = '';
+
+              if (selectedObraSocial) {
+                selectedObraSocial.Plans.forEach(plan => {
+                  const option = document.createElement('option');
+                  option.value = plan.id_plan;
+                  option.text = plan.plan;
+                  planSelect.add(option);
+                });
+              }
+            });

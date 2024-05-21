@@ -15,6 +15,7 @@ exports.mostrarCrearPaciente = async (req,res) => {
     }
 };
 
+
 exports.obtenerPlanesPorOS = async (req,res) => {
     try {
         const {id_os} = req.params;
@@ -59,14 +60,28 @@ exports.createPaciente = async (req, res) => {
 
 exports.obtenerPacientes = async (req,res) => {
     try {
-        const pacientes = await Paciente.findAll();
-        const paciente_os_plan = await Paciente_ObraSocial_Plan.findAll({
-            include:[
-            {model: ObraSocial},
-            {model: Plan}
-            ]
-        });
-        res.render('pages/pacienteViews/paciente', {pacientes, paciente_os_plan});
+        const [results, metadata] = await sequelize.query(`
+            SELECT
+                p.id_paciente,
+                p.nombre_paciente,
+                p.apellido_paciente,
+                p.documento_paciente,
+                p.fecha_nac,
+                p.sexo_paciente,
+                os.nombre_os,
+                pl.plan
+            FROM
+                pacientes p
+            LEFT JOIN
+                paciente_obraSocial_plan posp ON p.id_paciente = posp.id_paciente
+            LEFT JOIN
+                obrassociales os ON posp.id_os = os.id_os
+            LEFT JOIN
+                planes pl ON posp.id_plan = pl.id_plan
+            WHERE
+                p.activo = true;
+        `);
+        res.render('pages/pacienteViews/paciente', {pacientes: results});
     } catch (error) {
         console.error('Error al buscar pacientes.', error);
         res.status(500).json({message:'Error al buscar pacientes.'});
@@ -90,9 +105,26 @@ exports.buscarPacienteByDNI = async (req,res) => {
 
 exports.mostrarEditarPaciente = async (req,res) => {
     try {
-        const { id_paciente }= req.params;
+        const id_paciente = req.params.id_paciente;
         const paciente = await Paciente.findByPk(id_paciente);
-        res.render('pages/pacienteViews/actualizarPaciente', {paciente,create:false});
+        if (!paciente) {
+            res.status(404).json({message:'Paciente no encontrado.'});
+        }
+
+        const relaciones = await Paciente_ObraSocial_Plan.findAll({
+            where: {id_paciente}
+        });
+
+        const obrasSociales = await ObraSocial.findAll()
+        const planes = await Plan.findAll();
+
+        const relacionesDetalladas = await Promise.all(relaciones.map(async (relacion) => {
+            const obraSocial = await ObraSocial.findByPk(relacion.id_os);
+            const plan = await Plan.findByPk(relacion.id_plan);
+            return {...relacion.dataValues, obraSocial, plan}
+        }));
+
+        res.render('pages/pacienteViews/actualizarPaciente', {paciente,obrasSociales,planes,relacionesDetalladas,create:false});
     } catch (error) {
         console.error('Error al obtener paciente por ID:', error);
         res.status(500).json({ message: "Error al obtener paciente por ID" });
