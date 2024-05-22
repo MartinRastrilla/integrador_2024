@@ -106,25 +106,34 @@ exports.buscarPacienteByDNI = async (req,res) => {
 exports.mostrarEditarPaciente = async (req,res) => {
     try {
         const id_paciente = req.params.id_paciente;
-        const paciente = await Paciente.findByPk(id_paciente);
-        if (!paciente) {
+        const [results, metadata] = await sequelize.query(`
+            SELECT
+                p.id_paciente,
+                p.nombre_paciente,
+                p.apellido_paciente,
+                p.documento_paciente,
+                p.fecha_nac,
+                p.sexo_paciente,
+                os.nombre_os,
+                pl.plan
+            FROM
+                pacientes p
+            LEFT JOIN
+                paciente_obraSocial_plan posp ON p.id_paciente = posp.id_paciente
+            LEFT JOIN
+                obrassociales os ON posp.id_os = os.id_os
+            LEFT JOIN
+                planes pl ON posp.id_plan = pl.id_plan
+            WHERE
+                p.id_paciente = ${id_paciente};
+        `);
+        const obras_sociales = await ObraSocial.findAll( { where: {activo:true} } );
+        const pacienteU = await Paciente.findByPk(id_paciente);
+        if (!pacienteU) {
             res.status(404).json({message:'Paciente no encontrado.'});
         }
 
-        const relaciones = await Paciente_ObraSocial_Plan.findAll({
-            where: {id_paciente}
-        });
-
-        const obrasSociales = await ObraSocial.findAll()
-        const planes = await Plan.findAll();
-
-        const relacionesDetalladas = await Promise.all(relaciones.map(async (relacion) => {
-            const obraSocial = await ObraSocial.findByPk(relacion.id_os);
-            const plan = await Plan.findByPk(relacion.id_plan);
-            return {...relacion.dataValues, obraSocial, plan}
-        }));
-
-        res.render('pages/pacienteViews/actualizarPaciente', {paciente,obrasSociales,planes,relacionesDetalladas,create:false});
+        res.render('pages/pacienteViews/actualizarPaciente', {paciente:results,obras_sociales,create:false});
     } catch (error) {
         console.error('Error al obtener paciente por ID:', error);
         res.status(500).json({ message: "Error al obtener paciente por ID" });
@@ -132,9 +141,10 @@ exports.mostrarEditarPaciente = async (req,res) => {
 };
 
 exports.actualizarPaciente = async (req, res) => {
+    const transaction = await sequelize.transaction();
     try {
         const { id_paciente } = req.params;
-        const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, obra_social, plan } = req.body;
+        const { nombre_paciente, apellido_paciente, documento_paciente, fecha_nac, sexo_paciente, id_os, id_plan } = req.body;
         const paciente = await Paciente.findByPk(id_paciente);
         if (!paciente) {
             return res.status(404).json({ message: "Paciente no encontrado" });
@@ -144,12 +154,22 @@ exports.actualizarPaciente = async (req, res) => {
             apellido_paciente,
             documento_paciente,
             fecha_nac,
-            sexo_paciente,
-            obra_social,
-            plan
-        });
+            sexo_paciente
+        },{transaction});
+        console.log('PRUEBA 1 PLAN: ',id_plan);
+        if (id_plan) {
+            console.log('PRUEBA 2 PLAN: ',id_plan);
+            const paciente_os_plan = await Paciente_ObraSocial_Plan.update(
+                {id_os: id_os, id_plan: id_plan},
+                {where: {id_paciente} },
+                {transaction});
+            await transaction.commit()
+            return res.redirect('/paciente');
+        }
+        await transaction.commit()
         res.redirect('/paciente');
     } catch (error) {
+        await transaction.rollback();
         console.error('Error al Actualizar Paciente:', error);
         res.status(500).json({message: "Error al actualizar paciente"});
     }
