@@ -161,8 +161,8 @@ exports.actualizarPaciente = async (req, res) => {
             console.log('PRUEBA 2 PLAN: ',id_plan);
             const paciente_os_plan = await Paciente_ObraSocial_Plan.update(
                 {id_os: id_os, id_plan: id_plan},
-                {where: {id_paciente} },
-                {transaction});
+                {where: {id_paciente}, transaction }
+            );
             await transaction.commit()
             return res.redirect('/paciente');
         }
