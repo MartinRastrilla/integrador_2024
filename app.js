@@ -4,6 +4,7 @@ const path = require('path');
 const dotenv = require('dotenv');
 const PORT = 3000;
 const app = express();
+const initializeData = require('./config/initializeData');
 
 const User = require('./models/userModel');
 const Rol = require('./models/rolModel');
@@ -38,15 +39,18 @@ app.set('views', path.join(__dirname, 'views'));
 //REQUIRES ROUTES
 const indexRouter = require('./routes/index');
 const pacienteRouter = require('./routes/pacienteRoute');
+const userRouter = require('./routes/userRoute');
 
 //RUTAS
 app.use('/paciente', pacienteRouter);
 app.use('/', indexRouter);
+app.use('/user', userRouter);
 
 //SINCRONIZACIÓN DE TABLAS
 sequelize.sync({ force: false })
-  .then(() => {
+  .then(async() => {
     console.log('Modelos sincronizados correctamente con la base de datos.');
+    await initializeData();
   })
   .catch(err => {
     console.error('Error al sincronizar modelos con la base de datos:', err);

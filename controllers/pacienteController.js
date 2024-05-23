@@ -15,7 +15,6 @@ exports.mostrarCrearPaciente = async (req,res) => {
     }
 };
 
-
 exports.obtenerPlanesPorOS = async (req,res) => {
     try {
         const {id_os} = req.params;

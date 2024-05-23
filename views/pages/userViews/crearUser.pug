@@ -1,0 +1,72 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Crear Usuario
+        script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+        script.
+          $(document).ready(function() {
+            $('#profesionalCheckbox').change(function() {
+              if ($(this).is(':checked')) {
+                $('#profesionalFields').show();
+              } else {
+                $('#profesionalFields').hide();
+              }
+            });
+          });
+    body 
+        h1 Crear Usuario
+        form(action="/user/crear" method="POST")
+          label(for="nombre") Nombre:
+          input(type="text", name="nombre", required)
+          br
+
+          label(for="apellido") Apellido:
+          input(type="text", name="apellido", required)
+          br
+
+          label(for="documento") Documento:
+          input(type="text", name="documento", required)
+          br
+
+          label(for="contrasena") Contraseña:
+          input(type="password", name="contrasena", required)
+          br
+
+          label(for="adminCheckbox") Administrador:
+          input(type="checkbox", id="adminCheckbox", name="roles[]" value="admin")
+          br
+
+          label(for="profesionalCheckbox") Profesional:
+          input(type="checkbox", id="profesionalCheckbox", name="roles[]" value="profesional")
+          br
+
+          #profesionalFields(style="display:none")
+            label(for="id_refeps") ID_REFEPS:
+            input(type="text", name="id_refeps")
+            br
+
+            label(for="profesion") Profesión:
+            select(name="profesion")
+              option(value="medico") Médico
+              option(value="enfermero") Enfermero
+              option(value="fisioterapeuta") Fisioterapeuta
+            br
+
+            label(for="especialidad") Especialidad:
+            select(name="especialidad")
+              option(value="cardiologia") Cardiología
+              option(value="dermatologia") Dermatología
+              option(value="neurologia") Neurología
+            br
+
+            label(for="matricula") Matrícula:
+            input(type="text", name="matricula")
+            br
+
+            label(for="caducidad") Caducidad:
+            input(type="date", name="caducidad")
+            br
+
+          button(type="submit") Crear Usuario
