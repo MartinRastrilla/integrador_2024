@@ -2,6 +2,9 @@ const ObraSocial = require('../models/obrasocialModel');
 const Plan = require('../models/planModel');
 const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
 const Rol = require('../models/rolModel');
+const Profesion = require('../models/profesionModel');
+const Especilidad = require('../models/especialidadModel');
+const Prof_Esp = require('../models/profesion_especialidad_Model');
 const sequelize = require('./database');
 
 async function initializeData() {
@@ -83,6 +86,70 @@ async function initializeData() {
                     defaults: {
                         id_os: obraSocial.id_os,
                         id_plan: plan.id_plan
+                    },
+                    transaction
+                });
+            }
+        }
+        //VETERINARIO, MÉDICO, ODONTÓLOGO
+        const profesiones = [
+            {nombre_profesion: 'Médico'},
+            {nombre_profesion: 'Veterinario'},
+            {nombre_profesion: 'Odontólogo'}
+        ];
+
+        for (const profesionData of profesiones) {
+            const [profesion, created] = await Profesion.findOrCreate({
+                where: {nombre_profesion: profesionData.nombre_profesion},
+                defaults: profesionData,
+                transaction
+            });
+            if (created) {
+                console.log(`Profesión ${profesionData.nombre_profesion} agregada.`);
+            }
+        }
+
+        const especialidades = [
+            {nombre_especialidad: 'Cardiología'},
+            {nombre_especialidad: 'Gastroenterología'},
+            {nombre_especialidad: 'Neurología'},
+            {nombre_especialidad: 'Ginecología'},
+            {nombre_especialidad: 'Psiquiatría'},
+            {nombre_especialidad: 'Oncología'},
+            {nombre_especialidad: 'Odontología'},
+            {nombre_especialidad: 'Veterinaria'}
+        ];
+
+        for (const espData of especialidades) {
+            const [especialidad, created] = await Especilidad.findOrCreate({
+                where: {nombre_especialidad: espData.nombre_especialidad},
+                defaults: espData,
+                transaction
+            });
+            if (created) {
+                console.log(`Especialidad ${espData.nombre_especialidad} agregada.`);
+            }
+        }
+
+        const profEspRelations = [
+            {profesion:'Médico', especialidad:'Cardiología'},
+            {profesion:'Médico', especialidad:'Gastroenterología'},
+            {profesion:'Médico', especialidad:'Neurología'},
+            {profesion:'Médico', especialidad:'Ginecología'},
+            {profesion:'Médico', especialidad:'Psiquiatría'},
+            {profesion:'Médico', especialidad:'Oncología'},
+            {profesion:'Veterinario', especialidad:'Veterinaria'},
+            {profesion:'Odontólogo', especialidad:'Odontología'},
+        ];
+
+        for (const relationData of profEspRelations) {
+            const profesion = await Profesion.findOne({where: {nombre_profesion: relationData.profesion}, transaction});
+            const especialidad = await Especilidad.findOne({where: {nombre_especialidad: relationData.especialidad}, transaction});
+            if (profesion && especialidad) {
+                await Prof_Esp.findOrCreate({
+                    where: {
+                        id_profesion: profesion.id_profesion,
+                        id_especialidad: especialidad.id_especialidad
                     },
                     transaction
                 });
