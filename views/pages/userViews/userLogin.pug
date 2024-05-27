@@ -1,0 +1,43 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Login
+        script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+        style.
+            .hidden {
+                display: none;
+            }
+    body 
+        div#buttons-container
+            button#ingresar-btn Ingresar
+            button#registrar-btn Registrar
+
+        div#login-form-container.hidden
+            button#volver-btn Volver
+            form(action="/login" method="POST")
+                label(for="documento") Documento:
+                input(type="text" name="documento" id="documento" required)
+                br
+                label(for="password") Contraseña:
+                input(type="password" name="password" id="password" required)
+                br
+                button(type="submit") Ingresar
+        
+        script.
+            $(document).ready(function() {
+              $('#ingresar-btn').click(function() {
+                $('#buttons-container').hide();
+                $('#login-form-container').show();
+              });
+              $('#volver-btn').click(function() {
+                $('#login-form-container').hide();
+                $('#buttons-container').show();
+              });
+              $('#registrar-btn').click(function() {
+                window.location.href = '/user/crear';
+              });
+            });
+
+            

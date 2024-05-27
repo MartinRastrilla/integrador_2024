@@ -23,7 +23,10 @@ const ObraSocial_Plan = require('./models/obraSocial_Plan_Model');
 const Paciente_ObraSocial_Plan = require('./models/paciente_obra_plan_Model');
 
 const Medicamento = require('./models/medicamentoModel');
-
+const Cocentracion = require('./models/concentracionModel');
+const Forma_farmaceutica = require('./models/forma_farmaceuticaModel');
+const Familia = require('./models/familiaModel');
+const Categoria = require('./models/categoriaModel');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON

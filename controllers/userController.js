@@ -18,6 +18,15 @@ exports.mostrarCrearUser = async (req,res) =>{
     }
 };
 
+exports.mostrarLoginUser = async (req,res) =>{
+    try {
+        res.render('pages/userViews/userLogin');
+    } catch (error) {
+        console.error('Error al mostrar la Login de Usuarios: ', error);
+        res.status(500).json({message: "Error al mostrar 'Login Usuarios'"});
+    }
+}
+
 exports.obtenerEspPorProfesion = async (req,res) => {
     try {
         const {id_profesion} = req.params;

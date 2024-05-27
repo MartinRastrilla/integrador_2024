@@ -13,42 +13,11 @@ const Medicamento = sequelize.define('Medicamento',{
       allowNull: false,
       unique: false,
     },
-    concentracion: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      unique: false,
-    },
-    forma_farmaceutica: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-      unique: false,
-    },
-    cant_u: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    categoria: {
-      type: DataTypes.STRING(30),
-      allowNull: false,
-    },
-    familia: {
-      type: DataTypes.STRING(30),
-      allowNull: false,
-    },
     activo: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
       allowNull: false,
     },
-  },
-  {
-    indexes: [
-      {
-        unique: true,
-        fields: ['nombre_generico', 'concentracion', 'forma_farmaceutica'],
-      },
-    ],
-  }
-);
+  },{tableName: 'Medicamentos'});
 
 module.exports = Medicamento;
