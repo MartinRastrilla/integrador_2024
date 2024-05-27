@@ -3,8 +3,9 @@ const sequelize = require('../config/database');
 const User = require('./userModel');
 
 const Profesional = sequelize.define('Profesional', {
-  id_user: {
+  id_profesional: {
     type: DataTypes.INTEGER,
+    primaryKey: true,
     references: {
       model: User,
       key: 'id_user'
@@ -14,14 +15,6 @@ const Profesional = sequelize.define('Profesional', {
     type: DataTypes.INTEGER,
     unique: true,
     allowNull: false
-  },
-  profesion: {
-    type: DataTypes.STRING(50),
-    allowNull: false
-  },
-  especialidad: {
-    type: DataTypes.STRING(50),
-    allowNull: true
   },
   domicilio: {
     type: DataTypes.STRING(80),
@@ -44,3 +37,4 @@ const Profesional = sequelize.define('Profesional', {
 });
 
 module.exports = Profesional; 
+

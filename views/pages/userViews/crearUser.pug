@@ -7,7 +7,7 @@ html(lang="en")
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
         script.
           $(document).ready(function() {
-            $('#profesionalCheckbox').change(function() {
+            $('#checkboxProfesional').change(function() {
               if ($(this).is(':checked')) {
                 $('#profesionalFields').show();
               } else {
@@ -15,50 +15,73 @@ html(lang="en")
               }
             });
           });
+          $(document).ready(function() {
+            $('#profesionSelect').change(function() {
+              const profesionID = $(this).val();
+              if (profesionID) {
+                $.ajax({
+                  url: `/user/especialidades/${profesionID}`,
+                  method: 'GET',
+                  success: function(data) {
+                    $('#especialidadSelect').empty();
+                    $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+                    data.forEach(especialidad => {
+                      $('#especialidadSelect').append(new Option(especialidad.nombre_especialidad, especialidad.id_especialidad));
+                    });
+                  },
+                  error: function(err) {
+                    console.error('Error al obtener los especialidades: ', err);
+                  }
+                });
+              } else {
+                $('#especialidadSelect').empty();
+                $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+              }
+            });
+          });
     body 
         h1 Crear Usuario
         form(action="/user/crear" method="POST")
           label(for="nombre") Nombre:
-          input(type="text", name="nombre", required)
+          input(type="text", name="nombre_user", required)
           br
 
           label(for="apellido") Apellido:
-          input(type="text", name="apellido", required)
+          input(type="text", name="apellido_user", required)
           br
 
           label(for="documento") Documento:
-          input(type="text", name="documento", required)
+          input(type="text", name="documento_user", required)
           br
 
           label(for="contrasena") Contraseña:
-          input(type="password", name="contrasena", required)
+          input(type="password", name="password_user", required)
           br
 
-          label(for="adminCheckbox") Administrador:
-          input(type="checkbox", id="adminCheckbox", name="roles[]" value="admin")
-          br
-
-          label(for="profesionalCheckbox") Profesional:
-          input(type="checkbox", id="profesionalCheckbox", name="roles[]" value="profesional")
-          br
+          each rol in roles  
+            label(for=`checkbox${rol.rol_user}`) #{rol.rol_user}
+              input(type="checkbox", id=`checkbox${rol.rol_user}`, name="roles" value=rol.id_rol)
+            br
 
           #profesionalFields(style="display:none")
             label(for="id_refeps") ID_REFEPS:
             input(type="text", name="id_refeps")
             br
 
-            label(for="profesion") Profesión:
-            select(name="profesion")
-              option(value="medico") Médico
-              option(value="enfermero") Enfermero
-              option(value="fisioterapeuta") Fisioterapeuta
+            label(for="profesionSelect") Profesión:
+            select#profesionSelect(name="id_profesion")
+              option(value="") Selecione una profesión
+                each profesion in profesiones
+                  option(value=profesion.id_profesion) #{profesion.nombre_profesion}
             br
 
-            label(for="especialidad") Especialidad:
-            select(name="especialidad")
-              option(value="cardiologia") Cardiología
-              option(value="dermatologia") Dermatología
-              option(value="neurologia") Neurología
+            label(for="especialidadSelect") Especialidad:
+            select#especialidadSelect(name="id_especialidad")
+              option(value="") Seleccione una especialidad
+            br
+
+            label(for="domicilio") Domicilio:
+            input(type="text", name="domicilio")
             br
 
             label(for="matricula") Matrícula:

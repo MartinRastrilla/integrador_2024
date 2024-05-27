@@ -27,7 +27,7 @@ html(lang="en")
           button(type='submit')= create ? 'Crear' : 'Actualizar'
         script.
           $(document).ready(function() {
-            $('#obraSocialSelect').change(function() {
+            $('#obraSocialSelect').change(function() { 
               const obraSocialID = $(this).val();
               if (obraSocialID) {
                 $.ajax({

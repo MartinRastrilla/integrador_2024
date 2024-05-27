@@ -15,7 +15,6 @@ const Dr_Prof_Esp = sequelize.define('Dr_Prof_Esp', {
     },
     id_profesion: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       references: {
         model: Profesion,
         key: 'id_profesion'
@@ -33,15 +32,16 @@ const Dr_Prof_Esp = sequelize.define('Dr_Prof_Esp', {
     indexes: [
       {
         unique: true,
-        fields: ['id_profesional', 'id_profesion', 'id_especialidad']
+        fields: ['id_profesional', 'id_especialidad']
       }
     ]
   });
 
-  Profesional.belongsToMany(Profesion, { through: Dr_Prof_Esp, foreignKey: 'id_profesional' });
-  Profesion.belongsToMany(Profesional, { through: Dr_Prof_Esp, foreignKey: 'id_profesion' });
-
-  Profesional.belongsToMany(Especialidad, { through: Dr_Prof_Esp, foreignKey: 'id_profesional' });
-  Especialidad.belongsToMany(Profesional, { through: Dr_Prof_Esp, foreignKey: 'id_especialidad' });
+  Profesional.belongsTo(Profesion, { foreignKey: 'id_profesion' });
+  Profesion.hasMany(Profesional, { foreignKey: 'id_profesion' });
+  
+  Profesional.belongsToMany(Especialidad, { through: Dr_Prof_Esp, foreignKey: 'id_profesional', otherKey: 'id_especialidad' });
+  Especialidad.belongsToMany(Profesional, { through: Dr_Prof_Esp, foreignKey: 'id_especialidad', otherKey: 'id_profesional' });
+  
 
 module.exports = Dr_Prof_Esp;
