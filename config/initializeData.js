@@ -5,6 +5,7 @@ const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
 const Rol = require('../models/rolModel');
 const Profesion = require('../models/profesionModel');
 const Especilidad = require('../models/especialidadModel');
+const Prof_Esp = require('../models/profesion_especialidad_Model')
 
 const Categoria = require('../models/categoriaModel');
 const Familia = require('../models/familiaModel');
@@ -169,7 +170,7 @@ async function initializeData() {
             {categoria: 'Cardiovascular'},
             {categoria: 'Sistema Nervioso'},
             {categoria: 'Aparato Respiratorio'},
-            {categoria: 'Sistema Endócrino'},
+            {categoria: 'Sistema Endocrino'},
             {categoria: 'Infecciones'},
             {categoria: 'Sistema Inmunológico'}
         ];
@@ -187,22 +188,71 @@ async function initializeData() {
 
         const familias = [
             //Digestivo
-            {familia: 'Antiácidos'},
-            {familia: 'Antieméticos'},
-            {familia: 'Laxantes'},
+            {familia: 'Antiácido'},
+            {familia: 'Antiemético'},
+            {familia: 'Laxante'},
             //Nutriología
-            {familia: 'Suplementos Vitamínicos'},
-            {familia: 'Suplementos Nutricionales'},
+            {familia: 'Suplemento Vitamínico'},
+            {familia: 'Suplemento Nutricional'},
             //Cardiovascular
-            {familia: 'Antihipertensivos'},
-            {familia: 'Antianginosos'},
-            {familia: 'Anticoagulantes'},
-            //
-            {familia: ''},
-            {familia: ''},
-            {familia: ''},
-            {familia: ''},
-        ]
+            {familia: 'Antihipertensivo'},
+            {familia: 'Antianginoso'},
+            {familia: 'Anticoagulante'},
+            //Sistema Nervioso
+            {familia: 'Analgésico'},
+            {familia: 'Antidepresivo'},
+            {familia: 'Antiepiléptico'},
+            //Aparato Respiratorio
+            {familia: 'Broncodilatador'},
+            {familia: 'Antihistamínico'},
+            {familia: 'Antitusivo'},
+            //Sistema Endócrino
+            {familia: 'Antidiabético'},
+            {familia: 'Hormona Tiroidea'},
+            {familia: 'Corticosteroide'},
+            //Infecciones
+            {familia: 'Antibiótico'},
+            {familia: 'Antiviral'},
+            {familia: 'Antifúngico'},
+            //Sistema inmunológico
+            {familia: 'Inmunosupresor'},
+            {familia: 'Inmunoestimulante'}
+        ];
+
+        for (const familiaData of familias) {
+            const [familia, created] = await Familia.findOrCreate({
+                where: {familia: familiaData.familia},
+                defaults: familiaData,
+                transaction
+            });
+            if (created) {
+                console.log(`Familia ${familiaData.familia} agregada.`);
+            }
+        }
+
+        const formas_farmaceuticas = [
+            {forma_farmaceutica: 'Cápsula'},
+            {forma_farmaceutica: 'Inyectable'},
+            {forma_farmaceutica: 'Supositorio'},
+            {forma_farmaceutica: 'Gotas'},
+            {forma_farmaceutica: 'Jarabe'},
+            {forma_farmaceutica: 'Parche'},
+            {forma_farmaceutica: 'Tableta'},
+            {forma_farmaceutica: 'Solución Oral'},
+            {forma_farmaceutica: 'Inhalador'},
+            {forma_farmaceutica: 'Crema'}
+        ];
+
+        for (const formaData of formas_farmaceuticas) {
+            const [forma_farmaceutica, created] = await Forma_farmaceutica.findOrCreate({
+                where: {forma_farmaceutica: formaData.forma_farmaceutica},
+                defaults: forma_farmaceutica,
+                transaction
+            });
+            if (created) {
+                console.log(`Forma Farmacéutica ${forma_farmaceutica.forma_farmaceutica} agregada.`);
+            }
+        }
 
         await transaction.commit();
         console.log('Datos predeterminados cargados.');
