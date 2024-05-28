@@ -27,6 +27,7 @@ const Cocentracion = require('./models/concentracionModel');
 const Forma_farmaceutica = require('./models/forma_farmaceuticaModel');
 const Familia = require('./models/familiaModel');
 const Categoria = require('./models/categoriaModel');
+const Presentacion = require('./models/presentacionModel');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON

@@ -36,9 +36,6 @@ const Dr_Prof_Esp = sequelize.define('Dr_Prof_Esp', {
       }
     ]
   });
-
-  Profesional.belongsTo(Profesion, { foreignKey: 'id_profesion' });
-  Profesion.hasMany(Profesional, { foreignKey: 'id_profesion' });
   
   Profesional.belongsToMany(Especialidad, { through: Dr_Prof_Esp, foreignKey: 'id_profesional', otherKey: 'id_especialidad' });
   Especialidad.belongsToMany(Profesional, { through: Dr_Prof_Esp, foreignKey: 'id_especialidad', otherKey: 'id_profesional' });

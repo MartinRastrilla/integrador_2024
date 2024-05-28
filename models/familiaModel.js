@@ -7,7 +7,7 @@ const Familia = sequelize.define('Familia', {
         primaryKey: true,
         autoIncrement: true
     },
-    Familia: {
+    familia: {
         type: DataTypes.STRING(20),
         allowNull: false,
         unique: true

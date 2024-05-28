@@ -1,10 +1,17 @@
 const ObraSocial = require('../models/obrasocialModel');
 const Plan = require('../models/planModel');
 const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
+
 const Rol = require('../models/rolModel');
 const Profesion = require('../models/profesionModel');
 const Especilidad = require('../models/especialidadModel');
-const Prof_Esp = require('../models/profesion_especialidad_Model');
+
+const Categoria = require('../models/categoriaModel');
+const Familia = require('../models/familiaModel');
+const Forma_farmaceutica = require('../models/forma_farmaceuticaModel');
+const Medicamento = require('../models/medicamentoModel');
+
+
 const sequelize = require('./database');
 
 async function initializeData() {
@@ -155,6 +162,47 @@ async function initializeData() {
                 });
             }
         }
+
+        const categorias = [
+            {categoria: 'Aparato Digestivo'},
+            {categoria: 'Nutriología'},
+            {categoria: 'Cardiovascular'},
+            {categoria: 'Sistema Nervioso'},
+            {categoria: 'Aparato Respiratorio'},
+            {categoria: 'Sistema Endócrino'},
+            {categoria: 'Infecciones'},
+            {categoria: 'Sistema Inmunológico'}
+        ];
+
+        for (const categoriaData of categorias) {
+            const [categoria, created] = await Categoria.findOrCreate({
+                where: {categoria: categoriaData.categoria},
+                defaults: categoriaData,
+                transaction
+            });
+            if (created) {
+                console.log(`Categoria ${categoriaData.categoria} agregada.`);
+            }
+        }
+
+        const familias = [
+            //Digestivo
+            {familia: 'Antiácidos'},
+            {familia: 'Antieméticos'},
+            {familia: 'Laxantes'},
+            //Nutriología
+            {familia: 'Suplementos Vitamínicos'},
+            {familia: 'Suplementos Nutricionales'},
+            //Cardiovascular
+            {familia: 'Antihipertensivos'},
+            {familia: 'Antianginosos'},
+            {familia: 'Anticoagulantes'},
+            //
+            {familia: ''},
+            {familia: ''},
+            {familia: ''},
+            {familia: ''},
+        ]
 
         await transaction.commit();
         console.log('Datos predeterminados cargados.');
