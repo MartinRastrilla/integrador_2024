@@ -2,7 +2,7 @@ const {DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
 
 const Familia = sequelize.define('Familia', {
-    id_Familia: {
+    id_familia: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true

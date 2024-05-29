@@ -28,6 +28,7 @@ const Forma_farmaceutica = require('./models/forma_farmaceuticaModel');
 const Familia = require('./models/familiaModel');
 const Categoria = require('./models/categoriaModel');
 const Presentacion = require('./models/presentacionModel');
+const Categoria_Familia = require('./models/categoria_familiaModel');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON
@@ -51,7 +52,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 
 //SINCRONIZACIÓN DE TABLAS
-sequelize.sync({ force: false })
+sequelize.sync({ force: true })
   .then(async() => {
     console.log('Modelos sincronizados correctamente con la base de datos.');
     await initializeData();

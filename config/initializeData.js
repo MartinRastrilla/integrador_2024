@@ -11,9 +11,10 @@ const Categoria = require('../models/categoriaModel');
 const Familia = require('../models/familiaModel');
 const Forma_farmaceutica = require('../models/forma_farmaceuticaModel');
 const Medicamento = require('../models/medicamentoModel');
-
+const Categoria_Familia = require('../models/categoria_familiaModel');
 
 const sequelize = require('./database');
+
 
 async function initializeData() {
     const transaction = await sequelize.transaction();
@@ -187,7 +188,7 @@ async function initializeData() {
         }
 
         const familias = [
-            //Digestivo
+            //Aparato Digestivo
             {familia: 'Antiácido'},
             {familia: 'Antiemético'},
             {familia: 'Laxante'},
@@ -230,6 +231,55 @@ async function initializeData() {
             }
         }
 
+        const catFamRelations = [
+            //Aparato Aparato Digestivo
+            {categoria:'Aparato Digestivo', familia:'Antiácido'},
+            {categoria:'Aparato Digestivo', familia:'Antiemético'},
+            {categoria:'Aparato Digestivo', familia:'Laxante'},
+            //Nutriología
+            {categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {categoria:'Nutriología', familia:'Suplemento Nutricional'},
+            //Cardiovascular
+            {categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {categoria:'Cardiovascular', familia:'Antianginoso'},
+            {categoria:'Cardiovascular', familia:'Anticoagulante'},
+            //Sistema Nervioso
+            {categoria:'Sistema Nervioso', familia:'Analgésico'},
+            {categoria:'Sistema Nervioso', familia:'Antidepresivo'},
+            {categoria:'Sistema Nervioso', familia:'Antiepiléptico'},
+            //Aparato Respiratorio
+            {categoria:'Aparato Respiratorio', familia:'Broncodilatador'},
+            {categoria:'Aparato Respiratorio', familia:'Antihistamínico'},
+            {categoria:'Aparato Respiratorio', familia:'Antitusivo'},
+            //Sistema Endocrino
+            {categoria:'Sistema Endocrino', familia:'Antidiabético'},
+            {categoria:'Sistema Endocrino', familia:'Hormona Tiroidea'},
+            {categoria:'Sistema Endocrino', familia:'Corticosteroide'},
+            //Infecciones
+            {categoria:'Infecciones', familia:'Antibiótico'},
+            {categoria:'Infecciones', familia:'Antiviral'},
+            {categoria:'Infecciones', familia:'Antifúngico'},
+            //Sistema Inmunológico
+            {categoria:'Sistema Inmunológico', familia:'Inmunosupresor'},
+            {categoria:'Sistema Inmunológico', familia:'Inmunoestimulante'}
+        ];
+
+        for (const relation of catFamRelations) {
+            const categoria = await Categoria.findOne({where: {categoria: relation.categoria}, transaction});
+            const familia = await Familia.findOne({where: {familia: relation.familia}, transaction});
+            if (categoria && familia) {
+                await Categoria_Familia.findOrCreate({
+                    where: {
+                        id_categoria: categoria.id_categoria,
+                        id_familia: familia.id_familia
+                    },
+                    transaction
+                });
+            }else{
+                console.error(`No se encontró la categoría o familia para: ${relation.categoria} - ${relation.familia}`);
+            }
+        }
+
         const formas_farmaceuticas = [
             {forma_farmaceutica: 'Cápsula'},
             {forma_farmaceutica: 'Inyectable'},
@@ -242,7 +292,8 @@ async function initializeData() {
             {forma_farmaceutica: 'Inhalador'},
             {forma_farmaceutica: 'Crema'},
             {forma_farmaceutica: 'Polvo'},
-            {forma_farmaceutica: 'Líquido'}
+            {forma_farmaceutica: 'Líquido'},
+            {forma_farmaceutica: 'Suspensión Oral'}
         ];
 
         for (const formaData of formas_farmaceuticas) {
@@ -261,7 +312,7 @@ async function initializeData() {
             {nombre_generico: 'Hidróxido de Magnesio', nombre_comercial: 'Leche de Magnesia'},
             {nombre_generico: 'Hidróxido de aluminio', nombre_comercial: 'Maalox'},
             //Antieméticos
-            {nombre_generico: 'Ondasetrón', nombre_comercial: 'Zofran'},
+            {nombre_generico: 'Ondansetrón', nombre_comercial: 'Zofran'},
             {nombre_generico: 'Metoclopramida', nombre_comercial: 'Reglan'},
             //Laxante
             {nombre_generico: 'Bisacodilo', nombre_comercial: 'Dulcolax'},
@@ -333,6 +384,51 @@ async function initializeData() {
                 console.log(`Forma Farmacéutica ${medicamento.nombre_generico} agregada.`);
             }
         }
+
+        const presentaciones = [
+            {medicamento:'Hidróxido de Magnesio',forma_farmaceutica:'Suspensión Oral', concentracion:'400',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antiácidos'},
+            {medicamento:'Hidróxido de Magnesio',forma_farmaceutica:'Suspensión Oral', concentracion:'5',u_medida:'ml', cant_u:'', categoria:'Aparato Digestivo', familia:'Antiácidos'},
+            {medicamento:'Hidróxido de aluminio',forma_farmaceutica:'Tableta', concentracion:'500',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antiácidos'},
+            {medicamento:'Hidróxido de aluminio',forma_farmaceutica:'Suspensión Oral', concentracion:'320',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antiácidos'},
+            {medicamento:'Hidróxido de aluminio',forma_farmaceutica:'Suspensión Oral', concentracion:'5',u_medida:'ml', cant_u:'', categoria:'Aparato Digestivo', familia:'Antiácidos'},
+            {medicamento:'Ondansetrón',forma_farmaceutica:'Tableta', concentracion:'4',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antieméticos'},
+            {medicamento:'Ondansetrón',forma_farmaceutica:'Tableta', concentracion:'8',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antieméticos'},
+            {medicamento:'Ondansetrón',forma_farmaceutica:'Inyectable', concentracion:'8',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antieméticos'},
+            {medicamento:'Metoclopramida',forma_farmaceutica:'Inyectable', concentracion:'10',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antieméticos'},
+            {medicamento:'Metoclopramida',forma_farmaceutica:'Tableta', concentracion:'10',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Antieméticos'},
+            {medicamento:'Bisacodilo',forma_farmaceutica:'Tableta', concentracion:'5',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Laxante'},
+            {medicamento:'Bisacodilo',forma_farmaceutica:'Supositorio', concentracion:'10',u_medida:'mg', cant_u:'', categoria:'Aparato Digestivo', familia:'Laxante'},
+            {medicamento:'Lactulosa',forma_farmaceutica:'Solución Oral', concentracion:'10',u_medida:'g', cant_u:'', categoria:'Aparato Digestivo', familia:'Laxante'},
+            {medicamento:'Lactulosa',forma_farmaceutica:'Solución Oral', concentracion:'15',u_medida:'ml', cant_u:'', categoria:'Aparato Digestivo', familia:'Laxante'},
+            {medicamento:'Vitamina D(colecalciferol)',forma_farmaceutica:'Cápsula', concentracion:'1000',u_medida:'IU', cant_u:'', categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {medicamento:'Vitamina D(colecalciferol)',forma_farmaceutica:'Cápsula', concentracion:'400',u_medida:'IU', cant_u:'', categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {medicamento:'Vitamina D(colecalciferol)',forma_farmaceutica:'Cápsula', concentracion:'50000',u_medida:'IU', cant_u:'', categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {medicamento:'Sulfato de Hierro',forma_farmaceutica:'Tableta', concentracion:'325',u_medida:'mg', cant_u:'', categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {medicamento:'Sulfato de Hierro',forma_farmaceutica:'Jarabe', concentracion:'325',u_medida:'mg', cant_u:'', categoria:'Nutriología', familia:'Suplemento Vitamínico'},
+            {medicamento:'Fórmula enteral',forma_farmaceutica:'Líquido', concentracion:'0',u_medida:'Varía', cant_u:'', categoria:'Nutriología', familia:'Suplemento Nutricional'},
+            {medicamento:'Suplemento Proteico',forma_farmaceutica:'Polvo', concentracion:'30',u_medida:'g', cant_u:'', categoria:'Nutriología', familia:'Suplemento Nutricional'},
+            {medicamento:'Enalapril',forma_farmaceutica:'Tableta', concentracion:'5',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Enalapril',forma_farmaceutica:'Tableta', concentracion:'10',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Enalapril',forma_farmaceutica:'Tableta', concentracion:'20',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Losartán',forma_farmaceutica:'Tableta', concentracion:'25',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Losartán',forma_farmaceutica:'Tableta', concentracion:'50',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Losartán',forma_farmaceutica:'Tableta', concentracion:'100',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antihipertensivo'},
+            {medicamento:'Nitroglicerina',forma_farmaceutica:'Tableta', concentracion:'0.3',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antianginoso'},
+            {medicamento:'Nitroglicerina',forma_farmaceutica:'Tableta', concentracion:'0.4',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antianginoso'},
+            {medicamento:'Nitroglicerina',forma_farmaceutica:'Tableta', concentracion:'0.6',u_medida:'mg', cant_u:'', categoria:'Cardiovascular', familia:'Antianginoso'},
+            {medicamento:'Isosorbida dinitrato',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'Cardiovascular', familia:'Antianginoso'},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+            {medicamento:'',forma_farmaceutica:'', concentracion:'',u_medida:'', cant_u:'', categoria:'', familia:''},
+
+        ];
 
         await transaction.commit();
         console.log('Datos predeterminados cargados.');

@@ -26,12 +26,9 @@ const Presentacion = sequelize.define('Presentacion', {
         key: 'id_forma'
       }
     },
-    id_concentracion: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Concentracion,
-        key: 'id_concentracion'
-      }
+    concentracion: {
+      type: DataTypes.FLOAT,
+      allowNull: false
     },
     u_medida: {
       type: DataTypes.STRING(10),
@@ -70,8 +67,5 @@ const Presentacion = sequelize.define('Presentacion', {
   
   Medicamento.belongsToMany(Forma_farmaceutica, { through: Presentacion, foreignKey: 'id_medicamento' });
   Forma_farmaceutica.belongsToMany(Medicamento, { through: Presentacion, foreignKey: 'id_forma' });
-  
-  Medicamento.belongsToMany(Concentracion, { through: Presentacion, foreignKey: 'id_medicamento' });
-  Concentracion.belongsToMany(Medicamento, { through: Presentacion, foreignKey: 'id_concentracion' });
   
   module.exports = Presentacion;
