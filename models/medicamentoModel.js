@@ -9,7 +9,12 @@ const Medicamento = sequelize.define('Medicamento',{
       allowNull: false,
     },
     nombre_generico: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: false,
+    },
+    nombre_comercial: {
+      type: DataTypes.STRING(50),
       allowNull: false,
       unique: false,
     },

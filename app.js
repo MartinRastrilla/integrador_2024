@@ -51,7 +51,7 @@ app.use('/', indexRouter);
 app.use('/user', userRouter);
 
 //SINCRONIZACIÓN DE TABLAS
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(async() => {
     console.log('Modelos sincronizados correctamente con la base de datos.');
     await initializeData();

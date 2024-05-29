@@ -206,7 +206,7 @@ async function initializeData() {
             {familia: 'Broncodilatador'},
             {familia: 'Antihistamínico'},
             {familia: 'Antitusivo'},
-            //Sistema Endócrino
+            //Sistema Endocrino
             {familia: 'Antidiabético'},
             {familia: 'Hormona Tiroidea'},
             {familia: 'Corticosteroide'},
@@ -240,17 +240,97 @@ async function initializeData() {
             {forma_farmaceutica: 'Tableta'},
             {forma_farmaceutica: 'Solución Oral'},
             {forma_farmaceutica: 'Inhalador'},
-            {forma_farmaceutica: 'Crema'}
+            {forma_farmaceutica: 'Crema'},
+            {forma_farmaceutica: 'Polvo'},
+            {forma_farmaceutica: 'Líquido'}
         ];
 
         for (const formaData of formas_farmaceuticas) {
             const [forma_farmaceutica, created] = await Forma_farmaceutica.findOrCreate({
                 where: {forma_farmaceutica: formaData.forma_farmaceutica},
-                defaults: forma_farmaceutica,
+                defaults: formaData,
                 transaction
             });
             if (created) {
                 console.log(`Forma Farmacéutica ${forma_farmaceutica.forma_farmaceutica} agregada.`);
+            }
+        }
+
+        const medicamentos = [
+            //Antiácido
+            {nombre_generico: 'Hidróxido de Magnesio', nombre_comercial: 'Leche de Magnesia'},
+            {nombre_generico: 'Hidróxido de aluminio', nombre_comercial: 'Maalox'},
+            //Antieméticos
+            {nombre_generico: 'Ondasetrón', nombre_comercial: 'Zofran'},
+            {nombre_generico: 'Metoclopramida', nombre_comercial: 'Reglan'},
+            //Laxante
+            {nombre_generico: 'Bisacodilo', nombre_comercial: 'Dulcolax'},
+            {nombre_generico: 'Lactulosa', nombre_comercial: 'Duphalac'},
+            //Suplementos vitamínicos
+            {nombre_generico: 'Vitamina D(colecalciferol)', nombre_comercial: 'Calciferol'},
+            {nombre_generico: 'Sulfato de Hierro', nombre_comercial: 'Feosol'},
+            //Suplementos nutricionales
+            {nombre_generico: 'Fórmula enteral', nombre_comercial: 'Ensure'},
+            {nombre_generico: 'Suplemento Proteico', nombre_comercial: 'Whey Protein'},
+            //Antihipertensivo
+            {nombre_generico: 'Enalapril', nombre_comercial: 'Vasotec'},
+            {nombre_generico: 'Losartán', nombre_comercial: 'Cozaar'},
+            //Antianginosos
+            {nombre_generico: 'Nitroglicerina', nombre_comercial: 'Nitrostat'},
+            {nombre_generico: 'Isosorbida dinitrato', nombre_comercial: 'Isordil'},
+            //Anticoagulante
+            {nombre_generico: 'Warfarina', nombre_comercial: 'Coumadin'},
+            {nombre_generico: 'Enoxaparina', nombre_comercial: 'Lovenox'},
+            //Analgésico
+            {nombre_generico: 'Paracetamol', nombre_comercial: 'Panadol'},
+            {nombre_generico: 'Ibuprofeno', nombre_comercial: 'Actron'},
+            //Antidepresivo
+            {nombre_generico: 'Fluoxetina', nombre_comercial: 'Prozac'},
+            {nombre_generico: 'Amitriptilina', nombre_comercial: 'Elavil'},
+            //Antiepiléptico
+            {nombre_generico: 'Carbamazepina', nombre_comercial: 'Tegretol'},
+            {nombre_generico: 'Valproato de sodio', nombre_comercial: 'Depakene'},
+            //Broncodilatadores
+            {nombre_generico: 'Salbutamol (Albuterol)', nombre_comercial: 'Ventolin'},
+            {nombre_generico: 'Ipratropio', nombre_comercial: 'Atrovent'},
+            //Antihistamínicos
+            {nombre_generico: 'Loratadina', nombre_comercial: 'Claritin'},
+            {nombre_generico: 'Cetirizina', nombre_comercial: 'Zyrtec'},
+            //Antitusivo
+            {nombre_generico: 'Dextrometorfano', nombre_comercial: 'Robitussin'},
+            {nombre_generico: 'Codeína', nombre_comercial: 'Cheratussin AC'},
+            //Antidiabético
+            {nombre_generico: 'Metformina', nombre_comercial: 'Glumetza'},
+            {nombre_generico: 'Insulina', nombre_comercial: 'Novolin (regular)'},
+            //Hormona Tiroidea
+            {nombre_generico: 'Levotiroxina', nombre_comercial: 'Synthroid'},
+            //Corticosteroide
+            {nombre_generico: 'Prednisona', nombre_comercial: 'Deltasone'},
+            {nombre_generico: 'Dexametasona', nombre_comercial: 'Decadron'},
+            //Antibiótico
+            {nombre_generico: 'Amoxicilina', nombre_comercial: 'Amoxil'},
+            {nombre_generico: 'Ciprofloxacino', nombre_comercial: 'Cipro'},
+            //Antiviral
+            {nombre_generico: 'Aciclovir', nombre_comercial: 'Zovirax'},
+            {nombre_generico: 'Oseltamivir', nombre_comercial: 'Tamiflu'},
+            //Antifúngico
+            {nombre_generico: 'Fluconazol', nombre_comercial: 'Diflucan'},
+            {nombre_generico: 'Nistatina', nombre_comercial: 'Mycostatin'},
+            //Inmunosupresor
+            {nombre_generico: 'Ciclosporina', nombre_comercial: 'Neoral'},
+            {nombre_generico: 'Metotrexato', nombre_comercial: 'Trexall'},
+            //Inmunoestimulante
+            {nombre_generico: 'Interferón alfa', nombre_comercial: 'Intron A'}
+        ];
+
+        for (const medicamentoData of medicamentos) {
+            const [medicamento, created] = await Medicamento.findOrCreate({
+                where: {nombre_generico: medicamentoData.nombre_generico},
+                defaults: medicamentoData,
+                transaction
+            });
+            if (created) {
+                console.log(`Forma Farmacéutica ${medicamento.nombre_generico} agregada.`);
             }
         }
 

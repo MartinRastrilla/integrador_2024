@@ -8,7 +8,7 @@ const Forma_farmaceutica = sequelize.define('Forma_farmaceutica', {
         autoIncrement: true
     },
     forma_farmaceutica: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(50),
         allowNull: false,
         unique: true
     },
