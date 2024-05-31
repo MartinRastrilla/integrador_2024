@@ -23,12 +23,16 @@ const ObraSocial_Plan = require('./models/obraSocial_Plan_Model');
 const Paciente_ObraSocial_Plan = require('./models/paciente_obra_plan_Model');
 
 const Medicamento = require('./models/medicamentoModel');
-const Cocentracion = require('./models/concentracionModel');
 const Forma_farmaceutica = require('./models/forma_farmaceuticaModel');
 const Familia = require('./models/familiaModel');
 const Categoria = require('./models/categoriaModel');
 const Presentacion = require('./models/presentacionModel');
 const Categoria_Familia = require('./models/categoria_familiaModel');
+
+const Prestacion = require('./models/prestacionModel');
+
+const Prescripcion = require('./models/prescripcionModel');
+const Receta = require('./models/recetaModel');
 
 dotenv.config();
 //MIDDLEWARE PARA PARSEAR DATOS JSON
@@ -45,14 +49,16 @@ app.set('views', path.join(__dirname, 'views'));
 const indexRouter = require('./routes/index');
 const pacienteRouter = require('./routes/pacienteRoute');
 const userRouter = require('./routes/userRoute');
+const profesionalRouter = require('./routes/profesionalRoute');
 
 //RUTAS
 app.use('/paciente', pacienteRouter);
 app.use('/', indexRouter);
 app.use('/user', userRouter);
+app.use('/profesional', profesionalRouter);
 
 //SINCRONIZACIÓN DE TABLAS
-sequelize.sync({ force: true })
+sequelize.sync({ force: false })
   .then(async() => {
     console.log('Modelos sincronizados correctamente con la base de datos.');
     await initializeData();

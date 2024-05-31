@@ -25,8 +25,7 @@ const Prestacion = sequelize.define('Prestacion', {
         allowNull: false
     }
 }, {
-    tableName: 'Prestaciones',
-    timestamps: false
+    tableName: 'Prestaciones'
 });
 
 module.exports = Prestacion;

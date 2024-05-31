@@ -1,0 +1,39 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Crear Prescripción
+    body 
+        form(action="/crear-prescripcion", method="post")
+            label(for="paciente") Seleccionar Paciente:
+            input(type="text", id="paciente", name="paciente", list="pacientes")
+            datalist(id="pacientes")
+                each paciente in pacientes
+                    option(value=paciente.id_paciente)= paciente.nombre
+            br
+            label(for="nombrePrestacion") Nombre de Prestación:
+            input(type="text", id="nombrePrestacion", name="nombrePrestacion")
+
+            br
+            label(for="lado") Lado:
+            input(type="text", id="lado", name="lado")
+
+            br
+            label(for="indicacion") Indicación:
+            input(type="text", id="indicacion", name="indicacion")
+
+            br
+            label(for="justificacion") Justificación:
+            input(type="text", id="justificacion", name="justificacion")
+
+            br
+            label(for="presentacion") Seleccionar Presentación:
+                input(type="text", id="presentacion", name="presentacion", list="presentaciones")
+                datalist(id="presentaciones")
+                  each presentacion in presentaciones
+                    option(value=`${presentacion.Medicamento.nombre_generico} ${presentacion.concentracion}${presentacion.u_medida} | ${presentacion.Forma_farmaceutica.forma_farmaceutica} | ${presentacion.Categoria.categoria}`)
+            button(type="button", id="agregarPresentacion") Agregar
+
+            br
+            button(type="submit") Crear Prescripción

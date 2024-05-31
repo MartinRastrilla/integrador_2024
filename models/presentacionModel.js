@@ -17,17 +17,19 @@ const Presentacion = sequelize.define('Presentacion', {
     references: {
       model: Medicamento,
       key: 'id_medicamento'
-    }
+    },
+    allowNull:false
   },
   id_forma: {
     type: DataTypes.INTEGER,
     references: {
       model: Forma_farmaceutica,
       key: 'id_forma'
-    }
+    },
+    allowNull:false
   },
   concentracion: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(8,2),
     allowNull: false
   },
   u_medida: {
@@ -35,21 +37,24 @@ const Presentacion = sequelize.define('Presentacion', {
     allowNull: false
   },
   cantidad_u: {
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
+    allowNull:false
   },
   id_categoria: {
     type: DataTypes.INTEGER,
     references: {
       model: Categoria,
       key: 'id_categoria'
-    }
+    },
+    allowNull:false
   },
   id_familia: {
     type: DataTypes.INTEGER,
     references: {
       model: Familia,
       key: 'id_familia'
-    }
+    },
+    allowNull:false
   },
   activo: {
     type: DataTypes.BOOLEAN,
@@ -67,5 +72,10 @@ const Presentacion = sequelize.define('Presentacion', {
     }
   ]
 });
+
+Presentacion.belongsTo(Medicamento, { foreignKey: 'id_medicamento' });
+Presentacion.belongsTo(Forma_farmaceutica, { foreignKey: 'id_forma' });
+Presentacion.belongsTo(Categoria, { foreignKey: 'id_categoria' });
+Presentacion.belongsTo(Familia, { foreignKey: 'id_familia' });
 
 module.exports = Presentacion;

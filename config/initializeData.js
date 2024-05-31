@@ -16,11 +16,9 @@ const Categoria_Familia = require('../models/categoria_familiaModel');
 const sequelize = require('./database');
 const Presentacion = require('../models/presentacionModel');
 
-
-async function initializeData() {
+const initializeData = async () => {
     const transaction = await sequelize.transaction();
     try {
-        
 
         const roles = [
             {rol_user:'Admin'},
@@ -537,28 +535,48 @@ async function initializeData() {
             {medicamento:'Interferón alfa',forma_farmaceutica:'Inyectable', concentracion:'6',u_medida:'MIU', cant_u:'', categoria:'Sistema Inmunológico', familia:'Inmunoestimulante'}
         ];
         for (const presentacionData of presentaciones) {
-            const medicamento = await Medicamento.findOne({where: {nombre_generico: presentacionData.medicamento}, transaction});
-            const forma_farmaceutica = await Forma_farmaceutica.findOne({where: {forma_farmaceutica: presentacionData.forma_farmaceutica}, transaction});
-            const categoria = await Categoria.findOne({where: {categoria: presentacionData.categoria},transaction});
-            const familia = await Familia.findOne({where:{familia: presentacionData.familia},transaction});
-            if (medicamento && forma_farmaceutica && categoria && familia) {
-                await Presentacion.findOrCreate({
-                    where: {
-                        id_medicamento: medicamento.id_medicamento,
-                        id_forma: forma_farmaceutica.id_forma,
-                        concentracion: presentacionData.concentracion,
-                        u_medida: presentacionData.u_medida,
-                        cantidad_u: presentacionData.cant_u,
-                        id_categoria: categoria.id_categoria,
-                        id_familia: familia.id_familia
-                    },
-                    defaults:presentacionData,
-                    transaction
+            try {
+              const medicamento = await Medicamento.findOne({ where: { nombre_generico: presentacionData.medicamento }, transaction });
+              const forma_farmaceutica = await Forma_farmaceutica.findOne({ where: { forma_farmaceutica: presentacionData.forma_farmaceutica }, transaction });
+              const categoria = await Categoria.findOne({ where: { categoria: presentacionData.categoria }, transaction });
+              const familia = await Familia.findOne({ where: { familia: presentacionData.familia }, transaction });
+      
+              if (medicamento && forma_farmaceutica && categoria && familia) {
+                const existingPresentacion = await Presentacion.findOne({
+                  where: {
+                    id_medicamento: medicamento.id_medicamento,
+                    id_forma: forma_farmaceutica.id_forma,
+                    concentracion: presentacionData.concentracion,
+                    u_medida: presentacionData.u_medida,
+                    cantidad_u: presentacionData.cant_u,
+                    id_categoria: categoria.id_categoria,
+                    id_familia: familia.id_familia
+                  },
+                  transaction
                 });
-            } else {
-                console.error(`No se encontró la categoría o familia para: ${presentacionData.categoria} - ${presentacionData.familia}`);
+      
+                if (!existingPresentacion) {
+                  await Presentacion.create({
+                    id_medicamento: medicamento.id_medicamento,
+                    id_forma: forma_farmaceutica.id_forma,
+                    concentracion: presentacionData.concentracion,
+                    u_medida: presentacionData.u_medida,
+                    cantidad_u: presentacionData.cant_u,
+                    id_categoria: categoria.id_categoria,
+                    id_familia: familia.id_familia,
+                    activo: presentacionData.activo
+                  }, { transaction });
+                } else {
+                  console.log(`Presentacion ya existe: ${JSON.stringify(presentacionData)}`);
+                }
+              } else {
+                console.error(`No se encontró el medicamento, forma farmacéutica, categoría o familia para: ${JSON.stringify(presentacionData)}`);
+              }
+            } catch (error) {
+              console.error(`Error al cargar presentacion: ${JSON.stringify(presentacionData)} - ${error.message}`);
+              throw error;
             }
-        }
+          }
 
         await transaction.commit();
         console.log('Datos predeterminados cargados.');
