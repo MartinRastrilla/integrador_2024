@@ -63,7 +63,7 @@ const Presentacion = sequelize.define('Presentacion', {
       fields: [
         'id_medicamento', 'id_forma', 'concentracion', 'u_medida', 'cantidad_u', 'id_categoria', 'id_familia'
       ],
-      name: 'unique_presentacion'  // Nombre más corto para el índice
+      name: 'unique_presentacion'
     }
   ]
 });
