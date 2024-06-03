@@ -21,14 +21,16 @@ const Prescripcion = sequelize.define('Prescripcion', {
         references: {
             model: Profesional,
             key: 'id_profesional'
-        }
+        },
+        allowNull:false
     },
     id_paciente: {
         type: DataTypes.INTEGER,
         references: {
             model: Paciente,
             key: 'id_paciente'
-        }
+        },
+        allowNull:false
     },
     fecha_prescripcion: {
         type: DataTypes.DATE,

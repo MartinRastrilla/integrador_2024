@@ -73,9 +73,14 @@ const Presentacion = sequelize.define('Presentacion', {
   ]
 });
 
-Presentacion.belongsTo(Medicamento, { foreignKey: 'id_medicamento' });
-Presentacion.belongsTo(Forma_farmaceutica, { foreignKey: 'id_forma' });
-Presentacion.belongsTo(Categoria, { foreignKey: 'id_categoria' });
-Presentacion.belongsTo(Familia, { foreignKey: 'id_familia' });
+Presentacion.belongsTo(Medicamento, { foreignKey: 'id_medicamento', as: 'Medicamento' });
+Presentacion.belongsTo(Forma_farmaceutica, { foreignKey: 'id_forma', as: 'Forma_farmaceutica' });
+Presentacion.belongsTo(Categoria, { foreignKey: 'id_categoria', as: 'Categoria' });
+Presentacion.belongsTo(Familia, { foreignKey: 'id_familia', as: 'Familia' });
+
+Medicamento.hasMany(Presentacion, { foreignKey: 'id_medicamento', as: 'Presentaciones' });
+Forma_farmaceutica.hasMany(Presentacion, { foreignKey: 'id_forma', as: 'Presentaciones' });
+Categoria.hasMany(Presentacion, { foreignKey: 'id_categoria', as: 'Presentaciones' });
+Familia.hasMany(Presentacion, { foreignKey: 'id_familia', as: 'Presentaciones' });
 
 module.exports = Presentacion;

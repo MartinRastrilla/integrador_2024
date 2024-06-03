@@ -1,0 +1,85 @@
+doctype html
+html(lang="es")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Aplicación de Salud
+    link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+    style.
+      body {
+        background-color: #e8f5e9; /* Verde claro */
+        color: #004d40; /* Verde oscuro */
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+      .navbar {
+        background-color: #004d40; /* Verde oscuro */
+      }
+      .navbar-brand, .nav-link, .footer {
+        color: #ffffff !important; /* Blanco */
+      }
+      .footer {
+        background-color: #004d40; /* Verde oscuro */
+      }
+      .btn-primary {
+        background-color: #00796b; /* Verde medio */
+        border-color: #00796b; /* Verde medio */
+      }
+      .btn-primary:hover {
+        background-color: #004d40; /* Verde oscuro */
+        border-color: #004d40; /* Verde oscuro */
+      }
+      .btnSide-primary {
+        background-color: #004d40; /* Verde medio */
+        border-color: #004d40; /* Verde medio */
+      }
+      .btnSide-primary:hover {
+        background-color: #00796b; /* Verde oscuro */
+        border-color: #00796b; /* Verde oscuro */
+      }
+      .sidebar {
+        background-color: #004d40; /* Verde oscuro */
+        color: #ffffff; /* Blanco */
+        position: fixed;
+        top: 56px; /* Altura del navbar */
+        bottom: 0;
+        left: 0;
+        width: 200px;
+        padding: 20px;
+      }
+      .sidebar a {
+        color: #ffffff; /* Blanco */
+      }
+      .content {
+        margin-left: 220px; /* Anchura de la sidebar + margen */
+        flex: 1;
+      }
+  body
+    nav.navbar.navbar-expand-lg.navbar-dark
+      a.navbar-brand(href="#") Roberto el Vocaloid
+      button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav", aria-expanded="false", aria-label="Toggle navigation")
+        span.navbar-toggler-icon
+      .collapse.navbar-collapse#navbarNav
+        ul.navbar-nav.ml-auto
+          li.nav-item
+            form(action="/logout", method="POST")
+              button.btn.btn-outline-light(type="submit") Logout
+    .sidebar
+      h4 Menú
+      ul.nav.flex-column
+        li.nav-item.btnSide-primary
+          a.nav-link(href="/pacientes") Pacientes
+        li.nav-item.btnSide-primary
+          a.nav-link(href="/crear-receta") Crear Receta
+    .content.container
+      block content
+    .footer.text-center.py-3
+      p &copy; 2024 Aplicación de Salud. Todos los derechos reservados.
+    script(src="https://code.jquery.com/jquery-3.5.1.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+    block scripts
+
+
+

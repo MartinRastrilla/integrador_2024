@@ -4,13 +4,47 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Crear Prescripción
+        script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+        script.
+          $(document).ready(function() {
+            $('#paciente').on('input',function(){
+                const pacienteText = $(this).val();
+                const pacienteOption = $('#pacientes option').filter(function(){
+                  return this.value === pacienteText;
+                });
+                const pacienteId = pacienteOption.data('id');
+                $('#id_paciente').val(pacienteId);
+              });
+            $('#agregarPresentacion').click(function() {
+              const presentacionText = $('#presentacion').val();
+              const presentacionOption = $('#presentacionesData option').filter(function() {
+                return this.value === presentacionText;
+              });
+              const presentacionId = presentacionOption.data('id');
+              if (presentacionId) {
+                const lista = $('#listaPresentaciones');
+                const item = $('<li>').text(presentacionText);
+                lista.append(item);
+                // Crear un campo oculto para almacenar el ID de esta presentación
+                const input = $('<input>').attr({
+                  type: 'hidden',
+                  name: 'presentaciones',
+                  value: presentacionId
+                });
+                $('#presentacionOculta').append(input);
+                $('#presentacion').val('');
+              }
+            });
+          });
     body 
-        form(action="/crear-prescripcion", method="post")
+        form(action="/profesional/crearPrescripcion", method="post")
             label(for="paciente") Seleccionar Paciente:
             input(type="text", id="paciente", name="paciente", list="pacientes")
             datalist(id="pacientes")
                 each paciente in pacientes
-                    option(value=paciente.id_paciente)= paciente.nombre
+                    option(value=`${paciente.nombre_paciente} ${paciente.apellido_paciente}` data-id=paciente.id_paciente)= `DNI: ${paciente.documento_paciente}`
+            input(type="hidden" id="id_paciente" name="id_paciente")
+
             br
             label(for="nombrePrestacion") Nombre de Prestación:
             input(type="text", id="nombrePrestacion", name="nombrePrestacion")
@@ -29,11 +63,13 @@ html(lang="en")
 
             br
             label(for="presentacion") Seleccionar Presentación:
-                input(type="text", id="presentacion", name="presentacion", list="presentaciones")
-                datalist(id="presentaciones")
-                  each presentacion in presentaciones
-                    option(value=`${presentacion.Medicamento.nombre_generico} ${presentacion.concentracion}${presentacion.u_medida} | ${presentacion.Forma_farmaceutica.forma_farmaceutica} | ${presentacion.Categoria.categoria}`)
+            input(type="text", id="presentacion", name="presentacion", list="presentacionesData")
+            datalist(id="presentacionesData")
+              each presentacion in presentaciones
+                option(value=`${presentacion.Medicamento.nombre_generico} ${presentacion.concentracion}${presentacion.u_medida} | ${presentacion.Forma_farmaceutica.forma_farmaceutica}` data-id=presentacion.id_presentacion)=`${presentacion.Categoria.categoria}: ${presentacion.Familia.familia}`
             button(type="button", id="agregarPresentacion") Agregar
-
+            ul#listaPresentaciones
             br
             button(type="submit") Crear Prescripción
+
+            #presentacionOculta
