@@ -47,7 +47,8 @@ exports.crearPrescripcion = async (req,res) => {
      //   indicacion,
      //   justificacion
      // },{transaction});
-      const {dosisX} = req.body;
+     console.log("--------------------------"+presentaciones[0]);
+      const dosisX = req.body[`dosis_${presentaciones[0]}`];
       console.log(dosisX);
       for(const med in presentaciones) {
         console.log('PRUEBA DENTRO DEL FOR');

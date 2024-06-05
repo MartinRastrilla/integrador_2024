@@ -78,8 +78,8 @@ block scripts
           const row = `
             <tr data-id="${presentacionId}">
               <td>${presentacionText}</td>
-              <td><input type="text" class="form-control dosis" name="dosisX" placeholder="Dosis"></td>
-              <td><input type="text" class="form-control duracion" name="duracionX" placeholder="Duración"></td>
+              <td><input type="text" class="form-control" name="dosis_${presentacionId}" id="dosis_${presentacionId}" placeholder="Dosis"></td>
+              <td><input type="text" class="form-control" name="duracion_${presentacionId}" id="duracion_${presentacionId}" placeholder="Duración"></td>
               <td><button type="button" class="btn btn-danger btn-sm eliminarPresentacion">Eliminar</button></td>
             </tr>
           `;
