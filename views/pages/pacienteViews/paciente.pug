@@ -1,83 +1,126 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Paciente
-    body
-        a(href="/paciente/crear") Crear Nuevo Paciente
-        h1 Pacientes:
-        input(type='text', name='buscarDocumento', id='buscarDocumento', placeholder='Buscar por documento')
-        button(type='button', id='btnBuscarDocumento') Buscar
-        table
-          thead 
-            tr
-              th Nombre
-              th Apellido
-              th Documento
-              th Fecha de Nacimiento
-              th Sexo
-              th Obra Social
-              th Plan
-          tbody
-            each paciente in pacientes
-              tr
-                td= paciente.nombre_paciente
-                td= paciente.apellido_paciente
-                td= paciente.documento_paciente
-                td= paciente.fecha_nac.toISOString().substring(0, 10)
-                td= paciente.sexo_paciente
-                td= paciente.nombre_os || 'N/A'
-                td= paciente.plan || 'N/A'
-                td
-                  a(href=`/paciente/editar/${paciente.id_paciente}`) Editar
-                  form(action=`/paciente/${paciente.id_paciente}`, method="POST")
-                    button(type="submit") Eliminar
-        h1 Buscar Paciente por DNI
-        form(action="/paciente/details", method="GET")
-          div
-            label(for="documento_paciente") Ingrese el DNI del paciente:
-            input(type="text", id="documento_paciente", name="documento_paciente", required)
-          div
-            button(type="submit") Buscar
-        if paciente
-          h1 Paciente
-          ul
-            li Nombre: #{paciente.nombre_paciente}
-            li Apellido: #{paciente.apellido_paciente}
-            li Documento: #{paciente.documento_paciente}
-            li Sexo: #{paciente.sexo_paciente}
-            li Fecha de Nacimiento: #{paciente.fecha_nac}
-            li Obra Social: #{paciente.obra_social}
-        else
-          div
-            p #{message}
-        if paciente
-          h1 Actualizar Paciente
-          form(action=`/paciente/details/${paciente.documento_paciente}`, method='PUT')
-            div.form-group
-              label(for='nombre') Nombre:
-              input#nombre.form-control(type='text', name='nombre_paciente', value=paciente ? paciente.nombre_paciente : '', required)
-            div.form-group
-              label(for='apellido') Apellido:
-              input#apellido.form-control(type='text', name='apellido_paciente', value=paciente ? paciente.apellido_paciente : '', required)
-            div.form-group
-              label(for='documento') Documento:
-              input#documento.form-control(type='text', name='documento_paciente', value=paciente ? paciente.documento_paciente : '', required)
-            div.form-group
-              label(for='fecha_nac') Fecha de Nacimiento:
-              input#fecha_nac.form-control(type='date', name='fecha_nac', value=paciente.fecha_nac.toISOString().substring(0, 10), required)
-            div.form-group
-              label(for='sexo') Sexo:
-              select#sexo.form-control(name='sexo_paciente', required)
-                option(value='Masculino' selected=paciente.sexo_paciente === 'Masculino') Masculino
-                option(value='Femenino' selected=paciente.sexo_paciente === 'Mujer') Femenino
-                option(value='Otro' selected=paciente.sexo_paciente !== 'Masculino' && paciente.sexo_paciente !== 'Mujer') Otro
-            div.form-group
-              label(for='obra_social') Obra Social:
-              input#obra_social.form-control(type='text', name='obra_social', value=paciente ? paciente.obra_social : '', required)
-            div.form-group
-              label(for='plan') Plan:
-              input#plan.form-control(type='text', name='plan', value=paciente ? paciente.plan : '' required)
-            div
-              button(type='submit') Actualizar
+extends ../../layout
+
+block content
+  .container
+    h1 Pacientes
+    a.btn.btn-success.mb-3(href="/paciente/crear") Agregar Nuevo Paciente
+
+    h2 Buscar Paciente por DNI
+    .form-group
+      label(for="documento_paciente") Ingrese el DNI del paciente:
+      input.form-control(type="text", id="documento_paciente", name="documento_paciente", required)
+    .form-group
+      button#btnBuscarDocumento.btn.btn-primary() Buscar
+    if message
+      .alert.alert-warning #{message}
+    table.table.table-striped.table-hover
+      thead.thead-dark
+        tr
+          th Nombre
+          th Apellido
+          th Documento
+          th Fecha de Nacimiento
+          th Sexo
+          th Obra Social
+          th Plan
+          th Acciones
+          th
+            button#btnRefresh.btn.btn-primary() Refrescar
+      tbody#pacientesTable
+        each paciente in pacientes
+          tr
+            td= paciente.nombre_paciente
+            td= paciente.apellido_paciente
+            td= paciente.documento_paciente
+            td= paciente.fecha_nac.toISOString().substring(0, 10)
+            td= paciente.sexo_paciente
+            td= paciente.nombre_os || 'Ninguno'
+            td= paciente.plan || 'Ninguno'
+            td
+              a.btn.btn-primary.btn-sm.mr-2(href=`/paciente/editar/${paciente.id_paciente}`) Editar
+              form.d-inline(action=`/paciente/${paciente.id_paciente}`, method="POST")
+                button.btn.btn-danger.btn-sm(type="submit") Eliminar
+
+block scripts
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+  script.
+    $(document).ready(function() {
+      $('#btnBuscarDocumento').click(function() {
+        const documento = $('#documento_paciente').val();
+        
+        $.ajax({
+          url: '/paciente/buscar',
+          method: 'GET',
+          data: { documento_paciente: documento },
+          success: function(data) {
+            const pacientesTable = $('#pacientesTable');
+            
+            if (data.message) {
+              alert(data.message);
+            } else {
+              pacientesTable.empty();
+              data.pacientes.forEach(paciente => {
+                const row = `
+                  <tr>
+                    <td>${paciente.nombre_paciente}</td>
+                    <td>${paciente.apellido_paciente}</td>
+                    <td>${paciente.documento_paciente}</td>
+                    <td>${new Date(paciente.fecha_nac).toISOString().substring(0, 10)}</td>
+                    <td>${paciente.sexo_paciente}</td>
+                    <td>${paciente.nombre_os || 'Ninguno'}</td>
+                    <td>${paciente.plan || 'Ninguno'}</td>
+                    <td>
+                      <a class="btn btn-primary btn-sm mr-2" href="/paciente/editar/${paciente.id_paciente}">Editar</a>
+                      <form class="d-inline" action="/paciente/${paciente.id_paciente}" method="POST">
+                        <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                      </form>
+                    </td>
+                  </tr>
+                `;
+                pacientesTable.append(row);
+              });
+            }
+          },
+          error: function(err) {
+            console.error('Error al buscar paciente:', err);
+            alert('Error al buscar paciente');
+          }
+        });
+      });
+      $('#btnRefresh').click(function() {
+        $.ajax({
+          url: '/paciente/todos',
+          method: 'GET',
+          success: function(data) {
+            const pacientesTable = $('#pacientesTable');
+            $('#documento_paciente').val('');
+            pacientesTable.empty();
+            
+            data.pacientes.forEach(paciente => {
+              const row = `
+                <tr>
+                  <td>${paciente.nombre_paciente}</td>
+                  <td>${paciente.apellido_paciente}</td>
+                  <td>${paciente.documento_paciente}</td>
+                  <td>${new Date(paciente.fecha_nac).toISOString().substring(0, 10)}</td>
+                  <td>${paciente.sexo_paciente}</td>
+                  <td>${paciente.nombre_os || 'Ninguno'}</td>
+                  <td>${paciente.plan || 'Ninguno'}</td>
+                  <td>
+                    <a class="btn btn-primary btn-sm mr-2" href="/paciente/editar/${paciente.id_paciente}">Editar</a>
+                    <form class="d-inline" action="/paciente/${paciente.id_paciente}" method="POST">
+                      <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
+                    </form>
+                  </td>
+                </tr>
+              `;
+              pacientesTable.append(row);
+            });
+          },
+          error: function(err) {
+            console.error('Error al refrescar pacientes:', err);
+            alert('Error al refrescar pacientes');
+          }
+        });
+      });
+    });

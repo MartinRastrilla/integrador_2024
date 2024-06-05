@@ -57,6 +57,36 @@ exports.createPaciente = async (req, res) => {
     }
 };
 
+exports.obtenerTodosPacientes = async (req,res) => {
+    try {
+        const [results, metadata] = await sequelize.query(`
+            SELECT
+                p.id_paciente,
+                p.nombre_paciente,
+                p.apellido_paciente,
+                p.documento_paciente,
+                p.fecha_nac,
+                p.sexo_paciente,
+                os.nombre_os,
+                pl.plan
+            FROM
+                pacientes p
+            LEFT JOIN
+                paciente_obraSocial_plan posp ON p.id_paciente = posp.id_paciente
+            LEFT JOIN
+                obrassociales os ON posp.id_os = os.id_os
+            LEFT JOIN
+                planes pl ON posp.id_plan = pl.id_plan
+            WHERE
+                p.activo = true;
+        `);
+        res.json({pacientes: results});
+    } catch (error) {
+        console.error('Error al buscar pacientes.', error);
+        res.status(500).json({message:'Error al buscar pacientes.'});
+    }
+};
+
 exports.obtenerPacientes = async (req,res) => {
     try {
         const [results, metadata] = await sequelize.query(`
@@ -87,18 +117,45 @@ exports.obtenerPacientes = async (req,res) => {
     }
 };
 
-exports.buscarPacienteByDNI = async (req,res) => {
+exports.buscarPacientePorDNI = async (req, res) => {
     try {
-        const { documento_paciente }= req.query;
-        const paciente = await Paciente.findOne({ where: { documento_paciente } });
-        if (!paciente) {
-            const message = "Paciente no Encontrado."
-            return res.render('pages/pacienteViews/paciente', {message});
+        const { documento_paciente } = req.query;
+        if (!documento_paciente) {
+            return res.status(400).json({ message: 'El documento es requerido.' });
         }
-        res.render('pages/pacienteViews/paciente', {paciente});
+
+        const [results, metadata] = await sequelize.query(`
+            SELECT
+                p.id_paciente,
+                p.nombre_paciente,
+                p.apellido_paciente,
+                p.documento_paciente,
+                p.fecha_nac,
+                p.sexo_paciente,
+                os.nombre_os,
+                pl.plan
+            FROM
+                pacientes p
+            LEFT JOIN
+                paciente_obraSocial_plan posp ON p.id_paciente = posp.id_paciente
+            LEFT JOIN
+                obrassociales os ON posp.id_os = os.id_os
+            LEFT JOIN
+                planes pl ON posp.id_plan = pl.id_plan
+            WHERE
+                p.activo = true AND p.documento_paciente = :documento_paciente
+        `, {
+            replacements: { documento_paciente }
+        });
+
+        if (results.length === 0) {
+            return res.json({ pacientes: [], message: 'Paciente no encontrado.' });
+        }
+
+        res.json({ pacientes: results });
     } catch (error) {
-        console.error('Error al obtener paciente por ID:', error);
-        res.status(500).json({ message: "Error al obtener paciente por ID" });
+        console.error('Error al buscar paciente por DNI.', error);
+        res.status(500).json({ message: 'Error al buscar paciente por DNI.' });
     }
 };
 

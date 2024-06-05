@@ -26,6 +26,14 @@ const Receta = sequelize.define('Receta', {
         },
         allowNull: false
     },
+    dosis: {
+        type: DataTypes.STRING(150),
+        allowNull: false
+    },
+    duracion: {
+        type: DataTypes.STRING(150),
+        allowNull: false
+    },
     id_prestacion: {
         type: DataTypes.INTEGER,
         references: {

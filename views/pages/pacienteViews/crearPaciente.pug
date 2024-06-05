@@ -1,6 +1,6 @@
 extends ../../layout
 block content
-  h2 Crear Nuevo Paciente
+  h2 Agregar Nuevo Paciente
   form(action=`/paciente/${create ? 'crear' : 'actualizar'}`, method='POST')
     .form-group
       input.form-control(type='text', name='nombre_paciente', placeholder='Nombre', required)
@@ -17,13 +17,13 @@ block content
         option(value='Otro') Otro
     .form-group
       label(for="obraSocialSelect") Obra Social
-      select.form-control#obraSocialSelect(name="id_os")  
+      select#obraSocialSelect.form-control(name="id_os")  
         option(value="") Seleccione una obra social
           each os in obras_sociales
             option(value=os.id_os) #{os.nombre_os}
     .form-group
       label(for="planSelect") Plan
-      select.form-control#planSelect(name="id_plan") 
+      select#planSelect.form-control(name="id_plan") 
         option(value="") Seleccione un plan
       button.btn.btn-primary(type='submit') Crear 
 block scripts

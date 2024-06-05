@@ -38,7 +38,7 @@ const Prescripcion = sequelize.define('Prescripcion', {
         defaultValue: DataTypes.NOW
     },
     diagnostico: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(100),
         allowNull:false
     },
     vigencia: {

@@ -13,7 +13,8 @@ router.get('/editar/:id_paciente', pacienteControl.mostrarEditarPaciente);
 
 router.post('/:id_paciente', pacienteControl.borrarPaciente);
 
+router.get('/todos', pacienteControl.obtenerTodosPacientes);
 router.get('/', pacienteControl.obtenerPacientes);
-router.get('/details', pacienteControl.buscarPacienteByDNI);
+router.get('/buscar', pacienteControl.buscarPacientePorDNI);
 
 module.exports = router;

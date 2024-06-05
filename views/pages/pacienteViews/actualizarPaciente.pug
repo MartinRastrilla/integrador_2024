@@ -1,54 +1,56 @@
-doctype html
-html(lang="en")
-    head
-        meta(charset="UTF-8")
-        meta(name="viewport", content="width=device-width, initial-scale=1.0")
-        title Editar Paciente
-        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
-    body
-        a(href="/paciente") Volver 
-        h1= create ? 'Crear Nuevo Paciente' : 'Actualizar Paciente'
-        form(action=`/paciente/editar/${paciente[0].id_paciente}`, method='POST')
-          input(type='text', name='nombre_paciente', value=paciente[0] ? paciente[0].nombre_paciente : '', placeholder='Nombre', required)
-          input(type='text', name='apellido_paciente', value=paciente[0] ? paciente[0].apellido_paciente : '', placeholder='Apellido', required)
-          input(type='text', name='documento_paciente', value=paciente[0] ? paciente[0].documento_paciente : '', placeholder='Documento', required)
-          input(type='date', name='fecha_nac', value=paciente[0].fecha_nac.toISOString().substring(0, 10), placeholder='Fecha de Nacimiento', required)
-          select(name='sexo_paciente', required)
-            option(value='Masculino' selected=paciente[0].sexo_paciente === 'Masculino') Masculino
-            option(value='Femenino' selected=paciente[0].sexo_paciente === 'Femenino') Femenino
-            option(value='Otro' selected=paciente[0].sexo_paciente !== 'Masculino' && paciente[0].sexo_paciente !== 'Femenino') Otro
-          select#obraSocialSelect(name="id_os")  
-              each os in obras_sociales
-                option(value=os.id_os selected=paciente[0].nombre_os === os.nombre_os) #{os.nombre_os}
-          label(for="planSelect") Plan
-          select#planSelect(name="id_plan") 
-            option(value="") #{paciente[0].plan}
+extends ../../layout
+block content
+    a.btn.btn-primary.btn-sm.mr-2(href="/paciente") Volver
+    h1 Actualizar Paciente
+    form(action=`/paciente/editar/${paciente[0].id_paciente}`, method='POST')
+      .form-group
+        input.form-control(type='text', name='nombre_paciente', value=paciente[0] ? paciente[0].nombre_paciente : '', placeholder='Nombre', required)
+      .form-group
+        input.form-control(type='text', name='apellido_paciente', value=paciente[0] ? paciente[0].apellido_paciente : '', placeholder='Apellido', required)
+      .form-group
+        input.form-control(type='text', name='documento_paciente', value=paciente[0] ? paciente[0].documento_paciente : '', placeholder='Documento', required)
+      .form-group
+        input.form-control(type='date', name='fecha_nac', value=paciente[0].fecha_nac.toISOString().substring(0, 10), placeholder='Fecha de Nacimiento', required)
+      .form-group
+        select.form-control(name='sexo_paciente', required)
+          option(value='Masculino' selected=paciente[0].sexo_paciente === 'Masculino') Masculino
+          option(value='Femenino' selected=paciente[0].sexo_paciente === 'Femenino') Femenino
+          option(value='Otro' selected=paciente[0].sexo_paciente !== 'Masculino' && paciente[0].sexo_paciente !== 'Femenino') Otro
+      .form-group  
+        select#obraSocialSelect.form-control(name="id_os")  
+          each os in obras_sociales
+            option(value=os.id_os selected=paciente[0].nombre_os === os.nombre_os) #{os.nombre_os}
+      .form-group
+        label(for="planSelect") Plan
+        select#planSelect.form-control(name="id_plan") 
+          option(value="") #{paciente[0].plan}
 
-          button(type='submit') Actualizar
-
-        script.
-          $(document).ready(function() {
-            $('#obraSocialSelect').change(function() {
-              const obraSocialID = $(this).val();
-              if (obraSocialID) {
-                $.ajax({
-                  url: `/paciente/planes/${obraSocialID}`,
-                  method: 'GET',
-                  success: function(data) {
-                    $('#planSelect').empty();
-                    $('#planSelect').append(new Option('Selecciona un plan', ''));
-                    data.forEach(plan => {
-                      $('#planSelect').append(new Option(plan.plan, plan.id_plan));
-                    });
-                  },
-                  error: function(err) {
-                    console.error('Error al obtener los planes: ', err);
-                  }
-                });
-              } else {
-                $('#planSelect').empty();
-                $('#planSelect').append(new Option('Seleccione un plan', ''));
-              }
-            });
+        button.btn.btn-primary(type='submit') Actualizar
+block scripts
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+  script.
+    $(document).ready(function() {
+      $('#obraSocialSelect').change(function() {
+        const obraSocialID = $(this).val();
+        if (obraSocialID) {
+          $.ajax({
+            url: `/paciente/planes/${obraSocialID}`,
+            method: 'GET',
+            success: function(data) {
+              $('#planSelect').empty();
+              $('#planSelect').append(new Option('Selecciona un plan', ''));
+              data.forEach(plan => {
+                $('#planSelect').append(new Option(plan.plan, plan.id_plan));
+              });
+            },
+            error: function(err) {
+              console.error('Error al obtener los planes: ', err);
+            }
           });
+        } else {
+          $('#planSelect').empty();
+          $('#planSelect').append(new Option('Seleccione un plan', ''));
+        }
+      });
+    });
             
