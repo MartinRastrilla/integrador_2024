@@ -1,0 +1,37 @@
+extends ../../layout
+
+block content
+    .container
+        h1 Prescripciones del Paciente
+        h2 #{paciente.nombre_paciente} #{paciente.apellido_paciente}
+        .list-group
+          each prescripcion in prescripciones
+            .list-group-item
+              .d-flex.justify-content-between.align-items-center
+                .w-100
+                  h5.mb-1 #{prescripcion.Profesional.User.nombre} #{prescripcion.Profesional.User.apellido}
+                  p.mb-1 Diagnóstico: #{prescripcion.diagnostico}
+                  small Fecha de Creación: #{prescripcion.createdAt.toISOString().substring(0, 10)}
+                button.btn.btn-link.text-decoration-none(data-toggle="collapse" href=`#prescripcion_${prescripcion.id_prescripcion}` aria-expanded="false" aria-controls=`prescripcion_${prescripcion.id_prescripcion}`) Ver Detalles
+              div(class="collapse mt-2" id=`prescripcion_${prescripcion.id_prescripcion}`)
+                .card.card-body
+                  h5 Detalles de la Prescripción
+                  p Profesional: #{prescripcion.Profesional.nombre_profesional} #{prescripcion.Profesional.apellido_profesional}
+                  p Diagnóstico: #{prescripcion.diagnostico}
+                  p Fecha de Creación: #{prescripcion.createdAt.toISOString().substring(0, 10)}
+                  h5 Recetas Vinculadas
+                  each receta in prescripcion.Recetas
+                    .mb-3
+                      p Medicamento: #{receta.Presentacion.Medicamento.nombre_generico} #{receta.Presentacion.concentracion}#{receta.Presentacion.u_medida} | #{receta.Presentacion.Forma_farmaceutica.forma_farmaceutica}
+                      p Dosis: #{receta.dosis}
+                      p Duración: #{receta.duracion}
+
+block scripts
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+  script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+  script.
+    $(document).ready(function() {
+      $('.collapse').on('show.bs.collapse', function() {
+        $('.collapse').collapse('hide');
+      });
+    });

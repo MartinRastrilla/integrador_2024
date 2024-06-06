@@ -1,6 +1,7 @@
 const Paciente = require('../models/pacienteModel');
 const ObraSocial = require ('../models/obrasocialModel');
 const Plan = require('../models/planModel');
+const Prescripcion = require('../models/prescripcionModel');
 const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
 const Paciente_ObraSocial_Plan = require('../models/paciente_obra_plan_Model');
 const sequelize = require('../config/database');
@@ -14,6 +15,19 @@ exports.mostrarCrearPaciente = async (req,res) => {
         res.status(500).json({message: "Error al mostrar 'Crear'"});
     }
 };
+
+exports.mostrarRecetasPaciente = async (req,res) => {
+    try {
+    const id_paciente = req.params.id_paciente;
+    const paciente = await Paciente.findByPk(id_paciente);
+    const prescripciones = await Prescripcion.findAll({where: {id_paciente: id_paciente}});
+    
+    res.render('pages/pacienteViews/prescripcionPaciente',{paciente, prescripciones});
+    } catch (error) {
+        console.error('Error: ', error);
+        res.status(500).json({message: 'Error'});
+    }
+}
 
 exports.obtenerPlanesPorOS = async (req,res) => {
     try {
