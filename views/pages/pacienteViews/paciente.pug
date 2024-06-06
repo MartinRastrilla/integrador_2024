@@ -13,7 +13,7 @@ block content
       button#btnBuscarDocumento.btn.btn-primary() Buscar
     if message
       .alert.alert-warning #{message}
-    table.table.table-striped.table-hover
+    table.table.table-striped.table-hover.text-center
       thead.thead-dark
         tr
           th Nombre
@@ -40,6 +40,8 @@ block content
               a.btn.btn-primary.btn-sm.mr-2(href=`/paciente/editar/${paciente.id_paciente}`) Editar
               form.d-inline(action=`/paciente/${paciente.id_paciente}`, method="POST")
                 button.btn.btn-danger.btn-sm(type="submit") Eliminar
+            td
+              a.btn.btn-primary.btn-sm.mr-2(href=`/paciente/prescripcionPaciente/${paciente.id_paciente}`) Recetas
 
 block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
@@ -74,6 +76,9 @@ block scripts
                       <form class="d-inline" action="/paciente/${paciente.id_paciente}" method="POST">
                         <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
                       </form>
+                    </td>
+                    <td>
+                      <a class="btn btn-primary btn-sm mr-2" href="/paciente/prescripcionPaciente/${paciente.id_paciente}">Recetas</a>
                     </td>
                   </tr>
                 `;
@@ -112,6 +117,9 @@ block scripts
                       <button class="btn btn-danger btn-sm" type="submit">Eliminar</button>
                     </form>
                   </td>
+                  <td>
+                      <a class="btn btn-primary btn-sm mr-2" href="/paciente/prescripcionPaciente/${paciente.id_paciente}">Recetas</a>
+                    </td>
                 </tr>
               `;
               pacientesTable.append(row);

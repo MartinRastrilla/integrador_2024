@@ -1,9 +1,9 @@
 extends ../../layout
 block content
-  .container-fluid
-    .row
-      .col-md-5
-        form(action="/profesional/crearPrescripcion", method="post")
+  .container
+    form#prescriptionForm(action="/profesional/crearPrescripcion", method="post")
+      .row
+        .col-md-6
           .form-group
             label(for="paciente") Seleccionar Paciente:
             input.form-control(type="text", id="paciente", name="paciente", list="pacientes")
@@ -33,38 +33,28 @@ block content
             input.form-control(type="text", id="diagnostico", name="diagnostico")
 
           .form-group
-            label(for="presentacion") Seleccionar Presentación:
+            label(for="presentacion") Seleccionar Medicamento:
             input.form-control(type="text", id="presentacion", name="presentacion", list="presentacionesData")
             datalist(id="presentacionesData")
               each presentacion in presentaciones
                 option(value=`${presentacion.Medicamento.nombre_generico} ${presentacion.concentracion}${presentacion.u_medida} | ${presentacion.Forma_farmaceutica.forma_farmaceutica}` data-id=presentacion.id_presentacion)=`${presentacion.Categoria.categoria}: ${presentacion.Familia.familia}`
             button.btn.btn-secondary(type="button", id="agregarPresentacion") Agregar
-            br
-            button.btn.btn-primary.mt-3(type="submit") Crear Prescripción
+          button.btn.btn-primary.mt-3(type="submit" id="submitForm") Crear Prescripción
+        .col-md-6
+          ul#listaPresentaciones.list-group.mt-3
+          #presentacionOculta
 
-            #presentacionOculta
-
-      .col-md-7 
-        h2 Presentaciones Agregadas
-        table.table.table-striped
-          thead
-            tr
-              th Medicamento
-              th Dosis
-              th Duración
-              th Acciones
-          tbody#presentacionesTable
 block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
   script.
     $(document).ready(function() {
       $('#paciente').on('input', function() {
-        const pacienteText = $(this).val();
-        const pacienteOption = $('#pacientes option').filter(function() {
-          return this.value === pacienteText;
-        });
-        const pacienteId = pacienteOption.data('id');
-        $('#id_paciente').val(pacienteId);
+          const pacienteText = $(this).val();
+          const pacienteOption = $('#pacientes option').filter(function() {
+            return this.value === pacienteText;
+          });
+          const pacienteId = pacienteOption.data('id');
+          $('#id_paciente').val(pacienteId);
       });
 
       $('#agregarPresentacion').click(function() {
@@ -74,30 +64,30 @@ block scripts
         });
         const presentacionId = presentacionOption.data('id');
         if (presentacionId) {
-          const presentacionesTable = $('#presentacionesTable');
-          const row = `
-            <tr data-id="${presentacionId}">
-              <td>${presentacionText}</td>
-              <td><input type="text" class="form-control" name="dosis_${presentacionId}" id="dosis_${presentacionId}" placeholder="Dosis"></td>
-              <td><input type="text" class="form-control" name="duracion_${presentacionId}" id="duracion_${presentacionId}" placeholder="Duración"></td>
-              <td><button type="button" class="btn btn-danger btn-sm eliminarPresentacion">Eliminar</button></td>
-            </tr>
-          `;
-          presentacionesTable.append(row);
-
-          // Crear un campo oculto para almacenar el ID de esta presentación
-          const input = $('<input>').attr({
-            type: 'text',
-            name: 'presentaciones',
-            value: presentacionId
-          });
-          $('#presentacionOculta').append(input);
+          const lista = $('#listaPresentaciones');
+          const item = $(`
+            <li class="list-group-item">
+              <span>${presentacionText}</span>
+              <input type="hidden" name="presentaciones" value="${presentacionId}" />
+              <div class="form-group mt-2">
+                <label for="dosis_${presentacionId}">Dosis:</label>
+                <input type="text" name="dosis_${presentacionId}" id="dosis_${presentacionId}" class="form-control" placeholder="Dosis" required />
+              </div>
+              <div class="form-group mt-2">
+                <label for="duracion_${presentacionId}">Duración:</label>
+                <input type="text" name="duracion_${presentacionId}" id="duracion_${presentacionId}" class="form-control" placeholder="Duración" required />
+              </div>
+            </li>
+          `);
+          lista.append(item);
           $('#presentacion').val('');
         }
       });
-
-      // Eliminar presentación de la tabla
-      $(document).on('click', '.eliminarPresentacion', function() {
-        $(this).closest('tr').remove();
+      $('#submitForm').click(function(event) {
+        event.preventDefault();
+        const confirmCreate = confirm('¿Está seguro de que desea crear esta prescripción?');
+        if (confirmCreate) {
+          $('#prescriptionForm').submit();
+        }
       });
     });

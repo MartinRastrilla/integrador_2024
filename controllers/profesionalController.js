@@ -35,34 +35,46 @@ exports.crearPrescripcion = async (req,res) => {
       const {id_paciente, nombrePrestacion, lado, indicacion, justificacion, presentaciones, diagnostico} = req.body;
       const pacienteSelect = await Paciente.findByPk(id_paciente);
       console.log('Datos recibidos:', req.body);
-     // const prescripción = await Prescripcion.create({
-     //   id_profesional: 1,
-     //   id_paciente,
-     //   diagnostico
-     // },{transaction});
-//
-     // const prestacion = await Prestacion.create({
-     //   estudio: nombrePrestacion,
-     //   lado,
-     //   indicacion,
-     //   justificacion
-     // },{transaction});
-     console.log("--------------------------"+presentaciones[0]);
-      const dosisX = req.body[`dosis_${presentaciones[0]}`];
-      console.log(dosisX);
+
+     const prescripcion = await Prescripcion.create({
+       id_profesional: 1,
+       id_paciente,
+       diagnostico
+     },{transaction});
+
+     const prestacion = await Prestacion.create({
+       estudio: nombrePrestacion,
+       lado,
+       indicacion,
+       justificacion
+     },{transaction});
+
+     if (Array.isArray(presentaciones)) {
       for(const med in presentaciones) {
-        console.log('PRUEBA DENTRO DEL FOR');
-        const medID = presentaciones[med];
-        console.log(medID);
-        //const receta = await Receta.create({
-        //  id_prescripcion: prescripción.id_prescripcion,
-        //  id_presentacion: presentacionId,
-        //  dosis,
-        //  duracion,
-        //  id_prestacion: prestacion.id_prestacion
-        //  
-        //},{transaction});
+        const dosis = req.body[`dosis_${presentaciones[med]}`];
+        const duracion = req.body[`duracion_${presentaciones[med]}`];
+        const receta = await Receta.create({
+          id_prescripcion: prescripcion.id_prescripcion,
+          id_presentacion: presentaciones[med],
+          dosis,
+          duracion,
+          id_prestacion: prestacion.id_prestacion
+          
+        },{transaction});
+        }
+     }else{
+        const dosis = req.body[`dosis_${presentaciones}`];
+        const duracion = req.body[`duracion_${presentaciones}`];
+        const receta = await Receta.create({
+          id_prescripcion: prescripcion.id_prescripcion,
+          id_presentacion: presentaciones,
+          dosis,
+          duracion,
+          id_prestacion: prestacion.id_prestacion
+          
+        },{transaction});
       }
+      
       await transaction.commit();
       res.redirect('/profesional/crearPrescripcion');
     } catch (error) {
