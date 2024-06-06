@@ -9,18 +9,19 @@ block content
             .list-group-item
               .d-flex.justify-content-between.align-items-center
                 .w-100
-                  h5.mb-1 #{prescripcion.Profesional.User.nombre} #{prescripcion.Profesional.User.apellido}
+                  h5.mb-1 Médico: #{prescripcion.Profesional && prescripcion.Profesional.User ? `${prescripcion.Profesional.User.nombre} ${prescripcion.Profesional.User.apellido}` : 'Profesional no asignado'}
                   p.mb-1 Diagnóstico: #{prescripcion.diagnostico}
-                  small Fecha de Creación: #{prescripcion.createdAt.toISOString().substring(0, 10)}
+                  small Fecha de Creación: #{prescripcion.fecha_prescripcion.toISOString().substring(0, 10)}
                 button.btn.btn-link.text-decoration-none(data-toggle="collapse" href=`#prescripcion_${prescripcion.id_prescripcion}` aria-expanded="false" aria-controls=`prescripcion_${prescripcion.id_prescripcion}`) Ver Detalles
               div(class="collapse mt-2" id=`prescripcion_${prescripcion.id_prescripcion}`)
                 .card.card-body
                   h5 Detalles de la Prescripción
-                  p Profesional: #{prescripcion.Profesional.nombre_profesional} #{prescripcion.Profesional.apellido_profesional}
-                  p Diagnóstico: #{prescripcion.diagnostico}
-                  p Fecha de Creación: #{prescripcion.createdAt.toISOString().substring(0, 10)}
-                  h5 Recetas Vinculadas
-                  each receta in prescripcion.Recetas
+                  p Lado: #{prescripcion.Receta.Prestacion.lado ? `${prescripcion.Receta.Prestacion.lado}` : 'N/A'}
+                  p Indicación: #{prescripcion.Receta.Prestacion.indicacion ? `${prescripcion.Receta.Prestacion.indicacion}` : 'N/A'}
+                  p Justificación: #{prescripcion.Receta.Prestacion.justificacion}
+                  p Profesional: #{prescripcion.Profesional.User.nombre} #{prescripcion.Profesional.User.apellido}
+                  h5 Medicamentos recetados
+                  each receta in prescripcion.Receta
                     .mb-3
                       p Medicamento: #{receta.Presentacion.Medicamento.nombre_generico} #{receta.Presentacion.concentracion}#{receta.Presentacion.u_medida} | #{receta.Presentacion.Forma_farmaceutica.forma_farmaceutica}
                       p Dosis: #{receta.dosis}

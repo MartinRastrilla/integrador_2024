@@ -51,4 +51,7 @@ const Prescripcion = sequelize.define('Prescripcion', {
     timestamps: false
 });
 
+Prescripcion.belongsTo(Profesional, { foreignKey:'id_profesional' });
+
+
 module.exports = Prescripcion;

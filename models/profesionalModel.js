@@ -36,7 +36,7 @@ const Profesional = sequelize.define('Profesional', {
   }
 });
 
-Profesional.belongsTo(User, { foreignKey: 'id_user' });
+Profesional.belongsTo(User, { foreignKey: 'id_profesional' });
 
 module.exports = Profesional; 
 

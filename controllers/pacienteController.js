@@ -4,7 +4,16 @@ const Plan = require('../models/planModel');
 const Prescripcion = require('../models/prescripcionModel');
 const ObraSocial_Plan = require('../models/obraSocial_Plan_Model');
 const Paciente_ObraSocial_Plan = require('../models/paciente_obra_plan_Model');
+const Profesional = require('../models/profesionalModel');
+const Receta = require('../models/recetaModel');
+const Presentacion = require('../models/presentacionModel');
+const User = require('../models/userModel');
+const Medicamento = require('../models/medicamentoModel');
+const Forma_farmaceutica = require('../models/forma_farmaceuticaModel');
+const Familia = require('../models/familiaModel');
+const Categoria = require('../models/categoriaModel');
 const sequelize = require('../config/database');
+const Prestacion = require('../models/prestacionModel');
 
 exports.mostrarCrearPaciente = async (req,res) => {
     try {
@@ -20,7 +29,35 @@ exports.mostrarRecetasPaciente = async (req,res) => {
     try {
     const id_paciente = req.params.id_paciente;
     const paciente = await Paciente.findByPk(id_paciente);
-    const prescripciones = await Prescripcion.findAll({where: {id_paciente: id_paciente}});
+    const prescripciones = await Prescripcion.findAll({
+        where: { id_paciente: id_paciente },
+        include: [
+          {
+            model: Profesional, as:'Profesional',
+            include: [
+              {
+                model: User, as:'User'
+              }
+            ]
+          },
+          {
+            model: Receta,
+            include: [
+              {
+                model: Presentacion,
+                include: [
+                    { model: Medicamento, as: 'Medicamento' },
+                    { model: Forma_farmaceutica, as: 'Forma_farmaceutica' },
+                    { model: Categoria, as: 'Categoria' },
+                    { model: Familia, as: 'Familia' }
+                ]
+              },{
+                model: Prestacion
+              }
+            ]
+          }
+        ]
+      });
     
     res.render('pages/pacienteViews/prescripcionPaciente',{paciente, prescripciones});
     } catch (error) {
