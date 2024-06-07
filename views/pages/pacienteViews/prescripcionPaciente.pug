@@ -16,10 +16,9 @@ block content
               div(class="collapse mt-2" id=`prescripcion_${prescripcion.id_prescripcion}`)
                 .card.card-body
                   h5 Detalles de la Prescripción
-                  p Lado: #{prescripcion.Receta.Prestacion.lado ? `${prescripcion.Receta.Prestacion.lado}` : 'N/A'}
-                  p Indicación: #{prescripcion.Receta.Prestacion.indicacion ? `${prescripcion.Receta.Prestacion.indicacion}` : 'N/A'}
-                  p Justificación: #{prescripcion.Receta.Prestacion.justificacion}
-                  p Profesional: #{prescripcion.Profesional.User.nombre} #{prescripcion.Profesional.User.apellido}
+                  p Lado: #{prescripcion.Receta[0].Prestacion.lado ? `${prescripcion.Receta[0].Prestacion.lado}` : 'N/A'}
+                  p Indicación: #{prescripcion.Receta[0].Prestacion.indicacion ? `${prescripcion.Receta[0].Prestacion.indicacion}` : 'N/A'}
+                  p Justificación: #{prescripcion.Receta[0].Prestacion.justificacion}
                   h5 Medicamentos recetados
                   each receta in prescripcion.Receta
                     .mb-3
