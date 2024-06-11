@@ -13,18 +13,23 @@ block content
                   p.mb-1 Diagnóstico: #{prescripcion.diagnostico}
                   small Fecha de Creación: #{prescripcion.fecha_prescripcion.toISOString().substring(0, 10)}
                 button.btn.btn-link.text-decoration-none(data-toggle="collapse" href=`#prescripcion_${prescripcion.id_prescripcion}` aria-expanded="false" aria-controls=`prescripcion_${prescripcion.id_prescripcion}`) Ver Detalles
+                a.btn.btn-primary.ml-3(href=`/paciente/descargarPrescripcion/${prescripcion.id_prescripcion}`) Descargar PDF
               div(class="collapse mt-2" id=`prescripcion_${prescripcion.id_prescripcion}`)
                 .card.card-body
                   h5 Detalles de la Prescripción
-                  p Lado: #{prescripcion.Receta[0].Prestacion.lado ? `${prescripcion.Receta[0].Prestacion.lado}` : 'N/A'}
-                  p Indicación: #{prescripcion.Receta[0].Prestacion.indicacion ? `${prescripcion.Receta[0].Prestacion.indicacion}` : 'N/A'}
-                  p Justificación: #{prescripcion.Receta[0].Prestacion.justificacion}
                   h5 Medicamentos recetados
                   each receta in prescripcion.Receta
                     .mb-3
                       p Medicamento: #{receta.Presentacion.Medicamento.nombre_generico} #{receta.Presentacion.concentracion}#{receta.Presentacion.u_medida} | #{receta.Presentacion.Forma_farmaceutica.forma_farmaceutica}
                       p Dosis: #{receta.dosis}
                       p Duración: #{receta.duracion}
+                  h5 Prestaciones Efectuadas
+                  each prestacion in prescripcion.Prestacion
+                    .mb-3
+                      p Estudio: #{prestacion.Estudio.nombre_estudio}
+                      p Lado: #{prestacion.lado ? `${prestacion.lado}` : 'N/A'}
+                      p Indicación: #{prestacion.indicacion}
+                      p Justificación: #{prestacion.justificacion}
 
 block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")

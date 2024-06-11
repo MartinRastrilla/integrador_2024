@@ -18,5 +18,6 @@ router.get('/prescripcionPaciente/:id_paciente', pacienteControl.mostrarRecetasP
 router.get('/todos', pacienteControl.obtenerTodosPacientes);
 router.get('/', pacienteControl.obtenerPacientes);
 router.get('/buscar', pacienteControl.buscarPacientePorDNI);
+router.get('/descargarPrescripcion/:id_prescripcion', pacienteControl.descargarPrescripcion);
 
 module.exports = router;

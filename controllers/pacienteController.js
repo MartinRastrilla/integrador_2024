@@ -1,3 +1,7 @@
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+
 const Paciente = require('../models/pacienteModel');
 const ObraSocial = require ('../models/obrasocialModel');
 const Plan = require('../models/planModel');
@@ -14,6 +18,7 @@ const Familia = require('../models/familiaModel');
 const Categoria = require('../models/categoriaModel');
 const sequelize = require('../config/database');
 const Prestacion = require('../models/prestacionModel');
+const Estudio = require('../models/estudioModel');
 
 exports.mostrarCrearPaciente = async (req,res) => {
     try {
@@ -24,6 +29,96 @@ exports.mostrarCrearPaciente = async (req,res) => {
         res.status(500).json({message: "Error al mostrar 'Crear'"});
     }
 };
+
+exports.descargarPrescripcion = async (req,res) => {
+    try {
+        const id_prescripcion = req.params.id_prescripcion;
+        const prescripcion = await Prescripcion.findByPk(id_prescripcion, {
+            include: [
+                {
+                    model: Paciente, as:'Paciente'
+                },
+                {
+                  model: Profesional, as:'Profesional',
+                  include: [
+                    {
+                      model: User, as:'User'
+                    }
+                  ]
+                },
+                {
+                  model: Receta,
+                  include: [
+                    {
+                      model: Presentacion,
+                      include: [
+                          { model: Medicamento, as: 'Medicamento' },
+                          { model: Forma_farmaceutica, as: 'Forma_farmaceutica' },
+                          { model: Categoria, as: 'Categoria' },
+                          { model: Familia, as: 'Familia' }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  model: Prestacion, as:'Prestacion',
+                  include:[
+                      { model: Estudio, as:'Estudio' }
+                  ]
+                },
+              ]
+        });
+
+        if (!prescripcion) {
+            return res.status(404).json({ message: 'Prescripción no encontrada' });
+        }
+
+        const doc = new PDFDocument();
+        let buffers = [];
+        doc.on('data', buffers.push.bind(buffers));
+        doc.on('end', () => {
+          let pdfData = Buffer.concat(buffers);
+          res.writeHead(200, {
+            'Content-Length': Buffer.byteLength(pdfData),
+            'Content-Type': 'application/pdf',
+            'Content-Disposition': `attachment;filename=prescripcion_${id_prescripcion}.pdf`,
+          }).end(pdfData);
+        });
+
+        doc.fontSize(20).text('Prescripción Médica', { align:'center' });
+        doc.moveDown();
+        doc.fontSize(14).text(`Paciente: ${prescripcion.Paciente.nombre_paciente} ${prescripcion.Paciente.apellido_paciente}`);
+        doc.fontSize(14).text(`Médico: ${prescripcion.Profesional.User.nombre} ${prescripcion.Profesional.User.apellido}`);
+        doc.fontSize(14).text(`Fecha de Prescripción: ${prescripcion.fecha_prescripcion.toISOString().substring(0, 10)}`);
+        doc.moveDown();
+        doc.fontSize(14).text(`Diagnóstico: ${prescripcion.diagnostico}`);
+        doc.moveDown();
+
+        doc.fontSize(16).text('Prestaciones', { underline: true });
+        prescripcion.Prestacion.forEach(prestacion => {
+          doc.moveDown();
+          doc.fontSize(14).text(`Estudio: ${prestacion.Estudio.nombre_estudio}`);
+          doc.text(`Lado: ${prestacion.lado || 'N/A'}`);
+          doc.text(`Indicación: ${prestacion.indicacion}`);
+          doc.text(`Justificación: ${prestacion.justificacion}`);
+        });
+
+        doc.moveDown();
+        doc.fontSize(16).text('Recetas', { underline: true });
+        prescripcion.Receta.forEach(receta => {
+          doc.moveDown();
+          doc.fontSize(14).text(`Medicamento: ${receta.Presentacion.Medicamento.nombre_generico} ${receta.Presentacion.concentracion}${receta.Presentacion.u_medida} | ${receta.Presentacion.Forma_farmaceutica.forma_farmaceutica}`);
+          doc.text(`Dosis: ${receta.dosis}`);
+          doc.text(`Duración: ${receta.duracion}`);
+        });
+
+        doc.end();
+
+    } catch (error) {
+        console.error('Error: ', error);
+        res.status(500).json({message: 'Error'});
+    }
+}
 
 exports.mostrarRecetasPaciente = async (req,res) => {
     try {
@@ -51,14 +146,17 @@ exports.mostrarRecetasPaciente = async (req,res) => {
                     { model: Categoria, as: 'Categoria' },
                     { model: Familia, as: 'Familia' }
                 ]
-              },{
-                model: Prestacion
               }
             ]
-          }
+          },
+          {
+            model: Prestacion, as:'Prestacion',
+            include:[
+                { model: Estudio, as:'Estudio' }
+            ]
+          },
         ]
       });
-    
     res.render('pages/pacienteViews/prescripcionPaciente',{paciente, prescripciones});
     } catch (error) {
         console.error('Error: ', error);

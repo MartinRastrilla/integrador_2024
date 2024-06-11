@@ -30,6 +30,7 @@ const Presentacion = require('./models/presentacionModel');
 const Categoria_Familia = require('./models/categoria_familiaModel');
 
 const Prestacion = require('./models/prestacionModel');
+const Estudio = require('./models/estudioModel');
 
 const Prescripcion = require('./models/prescripcionModel');
 const Receta = require('./models/recetaModel');

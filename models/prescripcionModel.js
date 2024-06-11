@@ -52,6 +52,6 @@ const Prescripcion = sequelize.define('Prescripcion', {
 });
 
 Prescripcion.belongsTo(Profesional, { foreignKey:'id_profesional' });
-
+Prescripcion.belongsTo(Paciente, { foreignKey:'id_paciente' });
 
 module.exports = Prescripcion;

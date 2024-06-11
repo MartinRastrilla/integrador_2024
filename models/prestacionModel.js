@@ -1,5 +1,7 @@
 const {DataTypes} = require('sequelize');
 const sequelize = require('../config/database');
+const Estudio = require('./estudioModel');
+const Prescripcion = require('./prescripcionModel');
 
 const Prestacion = sequelize.define('Prestacion', {
     id_prestacion: {
@@ -7,13 +9,24 @@ const Prestacion = sequelize.define('Prestacion', {
         autoIncrement: true,
         primaryKey: true
     },
-    estudio: {
-        type: DataTypes.STRING(60),
-        unique: true,
-        allowNull: false
+    id_estudio: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Estudio,
+            key: 'id_estudio'
+        },
+        allowNull:false
+    },
+    id_prescripcion: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Prescripcion,
+            key: 'id_prescripcion'
+        },
+        allowNull:false
     },
     lado: {
-        type: DataTypes.STRING(60),
+        type: DataTypes.STRING(100),
         allowNull: true
     },
     indicacion: {
@@ -27,5 +40,13 @@ const Prestacion = sequelize.define('Prestacion', {
 }, {
     tableName: 'Prestaciones'
 });
+
+Prestacion.belongsTo(Estudio, { foreignKey: 'id_estudio', as:'Estudio' });
+Estudio.hasMany(Prestacion,{ foreignKey: 'id_estudio', as:'Prestaciones' });
+
+
+Prescripcion.hasMany(Prestacion,{ foreignKey: 'id_prescripcion', as:'Prestacion' });
+Prestacion.belongsTo(Prescripcion, { foreignKey: 'id_prescripcion' });
+
 
 module.exports = Prestacion;

@@ -12,9 +12,12 @@ const Familia = require('../models/familiaModel');
 const Forma_farmaceutica = require('../models/forma_farmaceuticaModel');
 const Medicamento = require('../models/medicamentoModel');
 const Categoria_Familia = require('../models/categoria_familiaModel');
+const Presentacion = require('../models/presentacionModel');
+
+const Estudio = require('../models/estudioModel');
 
 const sequelize = require('./database');
-const Presentacion = require('../models/presentacionModel');
+
 
 const initializeData = async () => {
     const transaction = await sequelize.transaction();
@@ -161,6 +164,30 @@ const initializeData = async () => {
                     },
                     transaction
                 });
+            }
+        }
+
+        const estudios = [
+            { nombre_estudio: 'Hemograma completo' },
+            { nombre_estudio: 'Perfil lipídico' },
+            { nombre_estudio: 'Tomografía computarizada (TC)' },
+            { nombre_estudio: 'Resonancia magnética (RM)' },
+            { nombre_estudio: 'Electrocardiograma (ECG)' },
+            { nombre_estudio: 'Radiografía' },
+            { nombre_estudio: 'Prueba de esfuerzo' },
+            { nombre_estudio: 'Ecografía' },
+            { nombre_estudio: 'Colonoscopia' },
+            { nombre_estudio: 'Mamografía' }
+        ];
+
+        for (const estudioData of estudios) {
+            const [estudio, created] = await Estudio.findOrCreate({
+                where: {nombre_estudio: estudioData.nombre_estudio},
+                defaults: estudioData,
+                transaction
+            });
+            if (created) {
+                console.log(`Estudio: ${estudioData.nombre_estudio} agregado.`);
             }
         }
 

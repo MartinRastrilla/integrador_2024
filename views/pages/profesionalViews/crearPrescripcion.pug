@@ -1,6 +1,7 @@
 extends ../../layout
 block content
   .container
+    h1 Crear Prescripción
     form#prescriptionForm(action="/profesional/crearPrescripcion", method="post")
       .row
         .col-md-6
@@ -11,27 +12,20 @@ block content
                 each paciente in pacientes
                     option(value=`${paciente.nombre_paciente} ${paciente.apellido_paciente}` data-id=paciente.id_paciente)= `DNI: ${paciente.documento_paciente}`
             input(type="hidden" id="id_paciente" name="id_paciente")
-
-          .form-group
-            label(for="nombrePrestacion") Nombre de Estudio:
-            input.form-control(type="text", id="nombrePrestacion", name="nombrePrestacion")
-
-          .form-group
-            label(for="lado") Lado:
-            input.form-control(type="text", id="lado", name="lado")
-
-          .form-group
-            label(for="indicacion") Indicación:
-            input.form-control(type="text", id="indicacion", name="indicacion")
-
-          .form-group
-            label(for="justificacion") Justificación:
-            input.form-control(type="text", id="justificacion", name="justificacion")
-
+          
           .form-group
             label(for="diagnostico") Diagnóstico:
             input.form-control(type="text", id="diagnostico", name="diagnostico")
 
+          .form-group
+            label(for="nombrePrestacion") Nombre de Estudio:
+            input.form-control(type="text", id="nombrePrestacion", name="nombrePrestacion", list="estudios")
+            datalist(id='estudios')
+                each estudio in estudios
+                    option(value=`${estudio.nombre_estudio}` data-id=estudio.id_estudio)
+            button.btn.btn-secondary(type="button", id="agregarEstudio") Agregar
+            ul#listaEstudios.list-group.mt-3
+            #estudioOculto
           .form-group
             label(for="presentacion") Seleccionar Medicamento:
             input.form-control(type="text", id="presentacion", name="presentacion", list="presentacionesData")
@@ -55,6 +49,37 @@ block scripts
           });
           const pacienteId = pacienteOption.data('id');
           $('#id_paciente').val(pacienteId);
+      });
+
+      $('#agregarEstudio').click(function() {
+        const estudioText = $('#nombrePrestacion').val();
+        const estudioOption = $('#estudios option').filter(function() {
+          return this.value === estudioText;
+        });
+        const estudioId = estudioOption.data('id');
+        if (estudioId) {
+          const lista = $('#listaEstudios');
+          const item = $(`
+            <li class="list-group-item">
+              <span>${estudioText}</span>
+              <input type="hidden" name="estudios" value="${estudioId}" />
+              <div class="form-group mt-2">
+                <label for="lado_${estudioId}">Lado:</label>
+                <input type="text" name="lado_${estudioId}" id="lado_${estudioId}" class="form-control" placeholder="Lado" required />
+              </div>
+              <div class="form-group mt-2">
+                <label for="indicacion_${estudioId}">Indicación:</label>
+                <input type="text" name="indicacion_${estudioId}" id="indicacion_${estudioId}" class="form-control" placeholder="Indicación" required />
+              </div>
+              <div class="form-group mt-2">
+                <label for="justificacion_${estudioId}">Justificación:</label>
+                <input type="text" name="justificacion_${estudioId}" id="justificacion_${estudioId}" class="form-control" placeholder="Justificación" required />
+              </div>
+            </li>
+          `);
+          lista.append(item);
+          $('#nombrePrestacion').val('');
+        }
       });
 
       $('#agregarPresentacion').click(function() {
