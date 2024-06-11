@@ -1,0 +1,65 @@
+extends ../../layout
+block content
+    h2 Añadir Medicamentos
+    form(action="/medicamentos/crearMedicamento", method='POST')
+      .form-group
+        label(for="nombre_generico") Nombre Genérico:
+        input.form-control(type="text", name='nombre_generico', placeholder='Nombre Genérico', required)
+      .form-group
+        label(for="nombre_comercial") Nombre Comercial:
+        input.form-control(type="text", name='nombre_comercial', placeholder='Nombre Comercial', required)
+      .form-group
+        label(for="forma_farmaceuticaSelect") Forma Farmacéutica:
+        select#forma_farmaceuticaSelect.form-control(name="id_forma") 
+            option(value="") Seleccione una forma farmacéutica
+                each ff in formas_farmaceuticas
+                    option(value=ff.id_forma) #{ff.forma_farmaceutica}
+      .form-group
+        label(for="concentracion") Concentración:
+        input.form-control(type="text", name='concentracion', placeholder='Concentración', required)
+      .form-group
+        label(for="u_medida") Unidad de Medida:
+        input.form-control(type="text", name='u_medida', placeholder='Unidad de Medida', required)
+      .form-group
+        label(for="categoriaSelect") Categoría:
+        select#categoriaSelect.form-control(name="id_categoria") 
+            option(value="") Seleccione una categoría
+                each cat in categorias
+                    option(value=cat.id_categoria) #{cat.categoria}
+      .form-group
+        label(for="familiaSelect") Familia
+        select#familiaSelect.form-control(name="id_familia") 
+            option(value="") Seleccione una familia
+        button.btn.btn-primary(type='submit') Crear 
+block scripts
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+  script.
+    $(document).ready(function() {
+      $('#categoriaSelect').change(function() { 
+        const categoriaID = $(this).val();
+        if (categoriaID) {
+          $.ajax({
+            url: `/medicamentos/familias/${categoriaID}`,
+            method: 'GET',
+            success: function(data) {
+              $('#familiaSelect').empty();
+              $('#familiaSelect').append(new Option('Seleccione una familia', ''));
+              data.forEach(familia => {
+                $('#familiaSelect').append(new Option(familia.familia, familia.id_familia));
+              });
+            },
+            error: function(err) {
+              console.error('Error al obtener los planes: ', err);
+            }
+          });
+        } else {
+          $('#familiaSelect').empty();
+          $('#familiaSelect').append(new Option('Seleccione una familia', ''));
+        }
+      });
+    });      
+
+
+
+
+

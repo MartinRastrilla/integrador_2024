@@ -51,12 +51,14 @@ const indexRouter = require('./routes/index');
 const pacienteRouter = require('./routes/pacienteRoute');
 const userRouter = require('./routes/userRoute');
 const profesionalRouter = require('./routes/profesionalRoute');
+const medicamentoRouter = require('./routes/medicamentoRoute');
 
 //RUTAS
 app.use('/paciente', pacienteRouter);
 app.use('/', indexRouter);
 app.use('/user', userRouter);
 app.use('/profesional', profesionalRouter);
+app.use('/medicamentos', medicamentoRouter);
 
 //SINCRONIZACIÓN DE TABLAS
 sequelize.sync({ force: false })
