@@ -4,26 +4,26 @@ html(lang="en")
         meta(charset="UTF-8")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Login
+        link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+        link(rel="stylesheet" href="/css/login.css")
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
-        style.
-            .hidden {
-                display: none;
-            }
     body 
-        div#buttons-container
-            button#ingresar-btn Ingresar
-            button#registrar-btn Registrar
+        .container
+            h1 Bienvenido!
+            div#buttons-container.text-center
+                button#ingresar-btn.btn.btn-custom.btn-block.mb-3 Ingresar
+                button#registrar-btn.btn.btn-secondary.btn-block Registrar
 
-        div#login-form-container.hidden
-            button#volver-btn Volver
-            form(action="/login" method="POST")
-                label(for="documento") Documento:
-                input(type="text" name="documento" id="documento" required)
-                br
-                label(for="password") Contraseña:
-                input(type="password" name="password" id="password" required)
-                br
-                button(type="submit") Ingresar
+            div#login-form-container.hidden
+                button#volver-btn.btn.btn-secondary.btn-block.mb-3 Volver
+                form(action="/login" method="POST")
+                    .form-group
+                        label(for="documento") Documento:
+                        input.form-control(type="text" name="documento" id="documento" required)
+                    .form-group
+                        label(for="password") Contraseña:
+                        input.form-control(type="password" name="password" id="password" required)
+                    button.btn.btn-custom.btn-block(type="submit") Ingresar
         
         script.
             $(document).ready(function() {
@@ -36,8 +36,6 @@ html(lang="en")
                 $('#buttons-container').show();
               });
               $('#registrar-btn').click(function() {
-                window.location.href = '/user/crear';
+                window.location.href = '/crear';
               });
             });
-
-            

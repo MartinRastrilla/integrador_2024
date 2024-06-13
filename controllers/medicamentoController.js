@@ -36,7 +36,7 @@ exports.obtenerFamiliasPorCat = async (req,res) => {
 exports.crearMedicamento = async (req,res) => {
     const transaction = await sequelize.transaction();
     try {
-        const { nombre_generico, nombre_comercial, id_forma, concentracion, u_medida, id_categoria, id_familia } = req.body;
+        const { nombre_generico, nombre_comercial, id_forma, concentracion, u_medida, cantidad_u, id_categoria, id_familia } = req.body;
         const medicamento = await Medicamento.create({
             nombre_generico,
             nombre_comercial
@@ -46,7 +46,7 @@ exports.crearMedicamento = async (req,res) => {
             id_forma,
             concentracion,
             u_medida,
-            cantidad_u: 0,
+            cantidad_u,
             id_categoria,
             id_familia
         },{transaction});
@@ -56,5 +56,21 @@ exports.crearMedicamento = async (req,res) => {
         await transaction.rollback();
         console.error('Error al crear medicamento:', error);
         res.status(500).json({ message: "Error al crear medicamento" });
+    }
+}
+
+exports.mostrarMedicamentos = async (req,res) => {
+    try {
+        const presentaciones = await Presentacion.findAll({
+            include: [
+                {model: Medicamento, as: 'Medicamento' },
+                {model: Forma_farmaceutica, as: 'Forma_farmaceutica' },
+                {model: Categoria, as: 'Categoria' },
+                {model: Familia, as: 'Familia' },
+            ]
+        });
+        res.render('pages/medicamentoViews/medicamento', {presentaciones});
+    } catch (error) {
+        
     }
 }

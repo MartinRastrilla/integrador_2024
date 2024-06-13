@@ -59,10 +59,10 @@ exports.crearPrescripcion = async (req,res) => {
         },{transaction});
       }
      } else {
-      const lado = req.body[`lado_${estudios}`];
-      const indicacion = req.body[`indicacion_${estudios}`];
-      const justificacion = req.body[`justificacion_${estudios}`];
-      const prestacion = await Prestacion.create({
+        const lado = req.body[`lado_${estudios}`];
+        const indicacion = req.body[`indicacion_${estudios}`];
+        const justificacion = req.body[`justificacion_${estudios}`];
+        const prestacion = await Prestacion.create({
         id_estudio: estudios,
         id_prescripcion: prescripcion.id_prescripcion,
         lado,

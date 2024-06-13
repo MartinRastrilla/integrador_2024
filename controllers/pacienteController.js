@@ -394,3 +394,17 @@ exports.borrarPaciente = async (req,res) =>{
         res.status(500).json({message:'Error al borrar paciente'});
     }
 };
+
+exports.verificarDocumento = async (req,res) => {
+    try {
+        const {documento} = req.params;
+        const paciente = await Paciente.findOne({where: {documento_paciente: documento}});
+        if (paciente) {
+            return res.json({exists:true});
+        }
+        res.json({exists:false});
+    } catch (error) {
+        console.error('Error al verificar documento: ', error);
+        res.status(500).json({ message: 'Error al verificar documento' });
+    }
+}

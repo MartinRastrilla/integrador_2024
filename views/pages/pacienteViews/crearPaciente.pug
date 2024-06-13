@@ -1,35 +1,43 @@
 extends ../../layout
 block content
   h2 Agregar Nuevo Paciente
-  form(action=`/paciente/${create ? 'crear' : 'actualizar'}`, method='POST')
+  form(action=`/paciente/${create ? 'crear' : 'actualizar'}`, method='POST', id='formAgregarPaciente')
     .form-group
+      label(for="nombre_paciente") Nombre
       input.form-control(type='text', name='nombre_paciente', placeholder='Nombre', required)
     .form-group
+      label(for="apellido_paciente") Apellido
       input.form-control(type='text', name='apellido_paciente', placeholder='Apellido', required)
     .form-group
-      input.form-control(type='text', name='documento_paciente', placeholder='Documento', required)
+      label(for="documento_paciente") Documento
+      input.form-control(type='text', name='documento_paciente', id='documento_paciente', placeholder='Documento', inputmode="numeric", required)
+      small#docError.text-danger(style="display:none;") *sólo se permiten números
+      small#docExistsError.text-danger(style="display:none;") *Documento ya existente
     .form-group
+      label(for="fecha_nac") Fecha de Nacimiento
       input.form-control(type='date', name='fecha_nac', placeholder='Fecha de Nacimiento', required)
     .form-group
+      label(for="sexo_paciente") Sexo
       select.form-control(name='sexo_paciente', required)
         option(value='Masculino') Masculino
         option(value='Femenino') Femenino
         option(value='Otro') Otro
     .form-group
       label(for="obraSocialSelect") Obra Social
-      select#obraSocialSelect.form-control(name="id_os")  
+      select#obraSocialSelect.form-control(name="id_os", required)  
         option(value="") Seleccione una obra social
           each os in obras_sociales
             option(value=os.id_os) #{os.nombre_os}
     .form-group
       label(for="planSelect") Plan
-      select#planSelect.form-control(name="id_plan") 
+      select#planSelect.form-control(name="id_plan", required) 
         option(value="") Seleccione un plan
       button.btn.btn-primary(type='submit') Crear 
 block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
   script.
     $(document).ready(function() {
+      let documentoValido = true;
       $('#obraSocialSelect').change(function() { 
         const obraSocialID = $(this).val();
         if (obraSocialID) {
@@ -50,6 +58,57 @@ block scripts
         } else {
           $('#planSelect').empty();
           $('#planSelect').append(new Option('Seleccione un plan', ''));
+        }
+      });
+      $('#documento_paciente').on('input', function() {
+        const value = $(this).val();
+        const isValid = /^\d*$/.test(value);
+        documentoValido = true;
+        if (!isValid) {
+          $('#docError').show();
+          $('#documento_paciente').addClass('is-invalid');
+        } else {
+          $('#docError').hide();
+          $('#documento_paciente').removeClass('is-invalid');
+        }
+        if (isValid && value) {
+          $.ajax({
+            url: `/paciente/verificarDocumento/${value}`,
+            method: 'GET',
+            success: function(data) {
+              if (data.exists) {
+                $('#docExistsError').show();
+                $('#documento_paciente').addClass('is-invalid');
+                documentoValido = false;
+              } else {
+                $('#docExistsError').hide();
+                $('#documento_paciente').removeClass('is-invalid');
+                documentoValido = true;
+              }
+            },
+            error: function(err) {
+              console.error('Error al verificar documento:', err);
+            }
+          });
+        } else {
+          $('#docExistsError').hide();
+          $('#documento_paciente').removeClass('is-invalid');
+        }
+      });
+
+      $('#formAgregarPaciente').on('submit', function(e) {
+        const value = $('#documento_paciente').val();
+        const isValid = /^\d*$/.test(value);
+        if (!isValid || !documentoValido) {
+          e.preventDefault();
+          if (!isValid) {
+            $('#docError').show();
+            $('#documento_paciente').addClass('is-invalid');
+          }
+          if (!documentoValido) {
+            $('#docExistsError').show();
+            $('#documento_paciente').addClass('is-invalid');
+          }
         }
       });
     });

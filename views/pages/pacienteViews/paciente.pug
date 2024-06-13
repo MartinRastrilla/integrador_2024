@@ -9,10 +9,9 @@ block content
     .form-group
       label(for="documento_paciente") Ingrese el DNI del paciente:
       input.form-control(type="text", id="documento_paciente", name="documento_paciente", required)
+      small#noPacienteMsg(style="color: #dc3545; display: none;") *Paciente no encontrado
     .form-group
       button#btnBuscarDocumento.btn.btn-primary() Buscar
-    if message
-      .alert.alert-warning #{message}
     table.table.table-striped.table-hover.text-center
       thead.thead-dark
         tr
@@ -49,6 +48,7 @@ block scripts
     $(document).ready(function() {
       $('#btnBuscarDocumento').click(function() {
         const documento = $('#documento_paciente').val();
+        const noPacienteMsg = $('#noPacienteMsg');
         
         $.ajax({
           url: '/paciente/buscar',
@@ -58,8 +58,9 @@ block scripts
             const pacientesTable = $('#pacientesTable');
             
             if (data.message) {
-              alert(data.message);
+              noPacienteMsg.show();
             } else {
+              noPacienteMsg.hide();
               pacientesTable.empty();
               data.pacientes.forEach(paciente => {
                 const row = `

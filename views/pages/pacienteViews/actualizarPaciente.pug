@@ -2,27 +2,35 @@ extends ../../layout
 block content
     a.btn.btn-primary.btn-sm.mr-2(href="/paciente") Volver
     h1 Actualizar Paciente
-    form(action=`/paciente/editar/${paciente[0].id_paciente}`, method='POST')
+    form(action=`/paciente/editar/${paciente[0].id_paciente}`, method='POST', id='formAgregarPaciente', data-paciente-documento=paciente[0].documento_paciente)
       .form-group
+        label(for="nombre_paciente") Nombre
         input.form-control(type='text', name='nombre_paciente', value=paciente[0] ? paciente[0].nombre_paciente : '', placeholder='Nombre', required)
       .form-group
+        label(for="apellido_paciente") Apellido
         input.form-control(type='text', name='apellido_paciente', value=paciente[0] ? paciente[0].apellido_paciente : '', placeholder='Apellido', required)
       .form-group
-        input.form-control(type='text', name='documento_paciente', value=paciente[0] ? paciente[0].documento_paciente : '', placeholder='Documento', required)
+        label(for="documento_paciente") Documento
+        input.form-control(type='text', name='documento_paciente', id='documento_paciente', value=paciente[0] ? paciente[0].documento_paciente : '', inputmode="numeric", placeholder='Documento', required)
+        small#docError.text-danger(style="display:none;") *sólo se permiten números
+        small#docExistsError.text-danger(style="display:none;") *Documento ya existente
       .form-group
+        label(for="fecha_nac") Fecha de Nacimiento
         input.form-control(type='date', name='fecha_nac', value=paciente[0].fecha_nac.toISOString().substring(0, 10), placeholder='Fecha de Nacimiento', required)
       .form-group
+        label(for="sexo_paciente") Sexo
         select.form-control(name='sexo_paciente', required)
           option(value='Masculino' selected=paciente[0].sexo_paciente === 'Masculino') Masculino
           option(value='Femenino' selected=paciente[0].sexo_paciente === 'Femenino') Femenino
           option(value='Otro' selected=paciente[0].sexo_paciente !== 'Masculino' && paciente[0].sexo_paciente !== 'Femenino') Otro
       .form-group  
-        select#obraSocialSelect.form-control(name="id_os")  
+        label(for="sexo_paciente") Sexo
+        select#obraSocialSelect.form-control(name="id_os", required)  
           each os in obras_sociales
             option(value=os.id_os selected=paciente[0].nombre_os === os.nombre_os) #{os.nombre_os}
       .form-group
         label(for="planSelect") Plan
-        select#planSelect.form-control(name="id_plan") 
+        select#planSelect.form-control(name="id_plan", required) 
           option(value="") #{paciente[0].plan}
 
         button.btn.btn-primary(type='submit') Actualizar
@@ -30,7 +38,9 @@ block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
   script.
     $(document).ready(function() {
-      $('#obraSocialSelect').change(function() {
+      let documentoValido = true;
+      const pacienteDoc = $('#formAgregarPaciente').data('paciente-documento');
+      $('#obraSocialSelect').change(function() { 
         const obraSocialID = $(this).val();
         if (obraSocialID) {
           $.ajax({
@@ -52,5 +62,55 @@ block scripts
           $('#planSelect').append(new Option('Seleccione un plan', ''));
         }
       });
+      $('#documento_paciente').on('input', function() {
+        const value = $(this).val();
+        const isValid = /^\d*$/.test(value);
+        documentoValido = true;
+        if (!isValid) {
+          $('#docError').show();
+          $('#documento_paciente').addClass('is-invalid');
+        } else {
+          $('#docError').hide();
+          $('#documento_paciente').removeClass('is-invalid');
+        }
+        if (isValid && value) {
+          $.ajax({
+            url: `/paciente/verificarDocumento/${value}`,
+            method: 'GET',
+            success: function(data) {
+              if (data.exists && value != pacienteDoc) {
+                $('#docExistsError').show();
+                $('#documento_paciente').addClass('is-invalid');
+                documentoValido = false;
+              } else {
+                $('#docExistsError').hide();
+                $('#documento_paciente').removeClass('is-invalid');
+                documentoValido = true;
+              }
+            },
+            error: function(err) {
+              console.error('Error al verificar documento:', err);
+            }
+          });
+        } else {
+          $('#docExistsError').hide();
+          $('#documento_paciente').removeClass('is-invalid');
+        }
+      });
+
+      $('#formAgregarPaciente').on('submit', function(e) {
+        const value = $('#documento_paciente').val();
+        const isValid = /^\d*$/.test(value);
+        if (!isValid || !documentoValido) {
+          e.preventDefault();
+          if (!isValid) {
+            $('#docError').show();
+            $('#documento_paciente').addClass('is-invalid');
+          }
+          if (!documentoValido) {
+            $('#docExistsError').show();
+            $('#documento_paciente').addClass('is-invalid');
+          }
+        }
+      });
     });
-            

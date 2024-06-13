@@ -5,6 +5,7 @@ html(lang="en")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
         title Crear Usuario
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+        link(rel="stylesheet", href="/css/crearUser.css")
         script.
           $(document).ready(function() {
             $('#checkboxProfesional').change(function() {
@@ -20,7 +21,7 @@ html(lang="en")
               const profesionID = $(this).val();
               if (profesionID) {
                 $.ajax({
-                  url: `/user/especialidades/${profesionID}`,
+                  url: `/especialidades/${profesionID}`,
                   method: 'GET',
                   success: function(data) {
                     $('#especialidadSelect').empty();
@@ -39,57 +40,59 @@ html(lang="en")
               }
             });
           });
-    body 
-        h1 Crear Usuario
-        form(action="/user/crear" method="POST")
-          label(for="nombre") Nombre:
-          input(type="text", name="nombre_user", required)
-          br
 
-          label(for="apellido") Apellido:
-          input(type="text", name="apellido_user", required)
-          br
-
-          label(for="documento") Documento:
-          input(type="text", name="documento_user", required)
-          br
-
-          label(for="contrasena") Contraseña:
-          input(type="password", name="password_user", required)
-          br
-
-          each rol in roles  
-            label(for=`checkbox${rol.rol_user}`) #{rol.rol_user}
-              input(type="checkbox", id=`checkbox${rol.rol_user}`, name="roles" value=rol.id_rol)
-            br
-
-          #profesionalFields(style="display:none")
-            label(for="id_refeps") ID_REFEPS:
-            input(type="text", name="id_refeps")
-            br
-
-            label(for="profesionSelect") Profesión:
-            select#profesionSelect(name="id_profesion")
-              option(value="") Selecione una profesión
-                each profesion in profesiones
-                  option(value=profesion.id_profesion) #{profesion.nombre_profesion}
-            br
-
-            label(for="especialidadSelect") Especialidad:
-            select#especialidadSelect(name="id_especialidad")
-              option(value="") Seleccione una especialidad
-            br
-
-            label(for="domicilio") Domicilio:
-            input(type="text", name="domicilio")
-            br
-
-            label(for="matricula") Matrícula:
-            input(type="text", name="matricula")
-            br
-
-            label(for="caducidad") Caducidad:
-            input(type="date", name="caducidad")
-            br
-
-          button(type="submit") Crear Usuario
+    body
+        .container
+            form(action="/crear" method="POST")
+              h1 Crear Usuario
+              label(for="nombre") Nombre:
+              input(type="text", name="nombre_user", required)
+              br
+    
+              label(for="apellido") Apellido:
+              input(type="text", name="apellido_user", required)
+              br
+    
+              label(for="documento") Documento:
+              input(type="text", name="documento_user", required)
+              br
+    
+              label(for="contrasena") Contraseña:
+              input(type="password", name="password_user", required)
+              br
+    
+              each rol in roles  
+                label(for=`checkbox${rol.rol_user}`) #{rol.rol_user}
+                  input(type="checkbox", id=`checkbox${rol.rol_user}`, name="roles" value=rol.id_rol)
+                br
+    
+              #profesionalFields.hidden 
+                label(for="id_refeps") ID_REFEPS:
+                input(type="text", name="id_refeps")
+                br
+    
+                label(for="profesionSelect") Profesión:
+                select#profesionSelect(name="id_profesion")
+                  option(value="") Selecione una profesión
+                    each profesion in profesiones
+                      option(value=profesion.id_profesion) #{profesion.nombre_profesion}
+                br
+    
+                label(for="especialidadSelect") Especialidad:
+                select#especialidadSelect(name="id_especialidad")
+                  option(value="") Seleccione una especialidad
+                br
+    
+                label(for="domicilio") Domicilio:
+                input(type="text", name="domicilio")
+                br
+    
+                label(for="matricula") Matrícula:
+                input(type="text", name="matricula")
+                br
+    
+                label(for="caducidad") Caducidad:
+                input(type="date", name="caducidad")
+                br
+    
+              button(type="submit") Crear Usuario

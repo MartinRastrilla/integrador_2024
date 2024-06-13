@@ -34,13 +34,14 @@ html(lang="es")
       .btnSide-primary {
         background-color: #004d40; /* Verde medio */
         border-color: #004d40; /* Verde medio */
+        border-radius:10px
       }
       .btnSide-primary:hover {
         background-color: #00796b; /* Verde oscuro */
         border-color: #00796b; /* Verde oscuro */
       }
       .sidebar {
-        background-color: #004d40; /* Verde oscuro */
+        background-color: #004d40; /* Verde medio */
         color: #ffffff; /* Blanco */
         position: fixed;
         top: 56px; /* Altura del navbar */
@@ -73,6 +74,10 @@ html(lang="es")
           a.nav-link(href="/paciente") Pacientes
         li.nav-item.btnSide-primary
           a.nav-link(href="/profesional/crearPrescripcion") Crear Receta
+        li.nav-item.btnSide-primary
+          a.nav-link(href="/estudios") Estudios
+        li.nav-item.btnSide-primary
+          a.nav-link(href="/medicamentos") Medicamentos
     .content.container
       block content
     .footer.text-center.py-3

@@ -1,0 +1,29 @@
+extends ../../layout
+block content
+  .container
+    h1 Estudios
+    button.btn.btn-primary#btnCrearEstudio Crear Estudio
+
+    form#formCrearEstudio(action="/estudios/crearEstudio", method="POST", style="display:none; margin-top:20px;")
+      .form-group
+        label(for="nombre_estudio") Nombre del Estudio:
+        input.form-control(type="text", id="nombre_estudio", name="nombre_estudio", required)
+      button.btn.btn-success(type="submit") Crear
+
+    table.table.table-striped.mt-4
+      thead
+        tr
+          th Nombre del Estudio
+      tbody
+        each estudio in estudios
+          tr
+            td= estudio.nombre_estudio
+
+block scripts
+  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
+  script.
+    $(document).ready(function() {
+      $('#btnCrearEstudio').click(function() {
+        $('#formCrearEstudio').toggle();
+      });
+    });

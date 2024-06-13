@@ -1,0 +1,26 @@
+extends ../../layout
+block content
+  .container
+    h1 Lista de Medicamentos
+    a.btn.btn-primary(href='/medicamentos/crear') Crear Medicamento
+    table.table.table-striped
+      thead
+        tr
+          th Nombre Genérico
+          th Nombre Comercial
+          th Forma Farmacéutica
+          th Concentración
+          th Cantidad de Unidades
+          th Categoría
+          th Familia
+      tbody
+        each presentacion in presentaciones
+          tr
+            td= presentacion.Medicamento ? presentacion.Medicamento.nombre_generico : 'N/A'
+            td= presentacion.Medicamento ? presentacion.Medicamento.nombre_comercial : 'N/A'
+            td= presentacion.Forma_farmaceutica ? presentacion.Forma_farmaceutica.forma_farmaceutica : 'N/A'
+            td #{presentacion.concentracion}#{presentacion.u_medida}
+            td= presentacion.cantidad_u != '' ? presentacion.cantidad_u : 'N/A'
+            td= presentacion.Categoria ? presentacion.Categoria.categoria : 'N/A'
+            td= presentacion.Familia ? presentacion.Familia.familia : 'N/A'
+

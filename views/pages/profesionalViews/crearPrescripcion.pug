@@ -15,7 +15,7 @@ block content
           
           .form-group
             label(for="diagnostico") Diagnóstico:
-            input.form-control(type="text", id="diagnostico", name="diagnostico")
+            input.form-control(type="text", id="diagnostico", name="diagnostico", required)
 
           .form-group
             label(for="nombrePrestacion") Nombre de Estudio:
@@ -42,13 +42,38 @@ block scripts
   script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
   script.
     $(document).ready(function() {
-      $('#paciente').on('input', function() {
-          const pacienteText = $(this).val();
-          const pacienteOption = $('#pacientes option').filter(function() {
-            return this.value === pacienteText;
-          });
-          const pacienteId = pacienteOption.data('id');
+      $('#paciente').on('blur', function() {
+        const pacienteText = $(this).val();
+        const pacienteOption = $('#pacientes option').filter(function() {
+          return this.value === pacienteText;
+        });
+        const pacienteId = pacienteOption.data('id');
+        if (pacienteOption.length > 0) {
           $('#id_paciente').val(pacienteId);
+        } else {
+          $(this).val('');
+          $('#id_paciente').val('');
+        }
+      });
+
+      $('#nombrePrestacion').on('blur', function() {
+        const estudioText = $(this).val();
+        const estudioOption = $('#estudios option').filter(function() {
+          return this.value === estudioText;
+        });
+        if (estudioOption.length === 0) {
+          $(this).val('');
+        }
+      });
+
+      $('#presentacion').on('blur', function() {
+        const presentacionText = $(this).val();
+        const presentacionOption = $('#presentacionesData option').filter(function() {
+          return this.value === presentacionText;
+        });
+        if (presentacionOption.length === 0) {
+          $(this).val('');
+        }
       });
 
       $('#agregarEstudio').click(function() {
@@ -59,26 +84,30 @@ block scripts
         const estudioId = estudioOption.data('id');
         if (estudioId) {
           const lista = $('#listaEstudios');
-          const item = $(`
+          if (lista.find(`input[value="${estudioId}"]`).length === 0) {
+            const item = $(`
             <li class="list-group-item">
               <span>${estudioText}</span>
               <input type="hidden" name="estudios" value="${estudioId}" />
               <div class="form-group mt-2">
                 <label for="lado_${estudioId}">Lado:</label>
-                <input type="text" name="lado_${estudioId}" id="lado_${estudioId}" class="form-control" placeholder="Lado" required />
+                <input type="text", name="lado_${estudioId}", id="lado_${estudioId}" class="form-control", placeholder="Lado", required />
               </div>
               <div class="form-group mt-2">
                 <label for="indicacion_${estudioId}">Indicación:</label>
-                <input type="text" name="indicacion_${estudioId}" id="indicacion_${estudioId}" class="form-control" placeholder="Indicación" required />
+                <input type="text", name="indicacion_${estudioId}", id="indicacion_${estudioId}", class="form-control", placeholder="Indicación", required />
               </div>
               <div class="form-group mt-2">
                 <label for="justificacion_${estudioId}">Justificación:</label>
-                <input type="text" name="justificacion_${estudioId}" id="justificacion_${estudioId}" class="form-control" placeholder="Justificación" required />
+                <input type="text", name="justificacion_${estudioId}", id="justificacion_${estudioId}", class="form-control", placeholder="Justificación", required />
               </div>
             </li>
-          `);
-          lista.append(item);
-          $('#nombrePrestacion').val('');
+            `);
+            lista.append(item);
+            $('#nombrePrestacion').val('');
+          } else {
+            alert('¡Ese estudio ya ha sido agregado!');
+          }
         }
       });
 
@@ -90,26 +119,62 @@ block scripts
         const presentacionId = presentacionOption.data('id');
         if (presentacionId) {
           const lista = $('#listaPresentaciones');
-          const item = $(`
+          if (lista.find(`input[value="${presentacionId}"]`).length === 0) {
+            const item = $(`
             <li class="list-group-item">
               <span>${presentacionText}</span>
               <input type="hidden" name="presentaciones" value="${presentacionId}" />
               <div class="form-group mt-2">
                 <label for="dosis_${presentacionId}">Dosis:</label>
-                <input type="text" name="dosis_${presentacionId}" id="dosis_${presentacionId}" class="form-control" placeholder="Dosis" required />
+                <input type="text", name="dosis_${presentacionId}", id="dosis_${presentacionId}", class="form-control", placeholder="Dosis", required />
               </div>
               <div class="form-group mt-2">
                 <label for="duracion_${presentacionId}">Duración:</label>
-                <input type="text" name="duracion_${presentacionId}" id="duracion_${presentacionId}" class="form-control" placeholder="Duración" required />
+                <input type="text", name="duracion_${presentacionId}", id="duracion_${presentacionId}", class="form-control", placeholder="Duración", required />
               </div>
             </li>
-          `);
-          lista.append(item);
-          $('#presentacion').val('');
+            `);
+            lista.append(item);
+            $('#presentacion').val('');
+          } else {
+            alert('¡El medicamento ya ha sido agregado!');
+          }
         }
       });
       $('#submitForm').click(function(event) {
         event.preventDefault();
+        let isValid = true;
+        let isFormValid = true;
+        const paciente = $('#paciente').val();
+        const idPaciente = $('#id_paciente').val();
+        const diagnostico = $('#diagnostico').val();
+
+        if (!paciente || !idPaciente) {
+          $('#paciente').addClass('is-invalid');
+          isFormValid = false;
+        } else {
+          $('#paciente').removeClass('is-invalid');
+        }
+
+        if (!diagnostico) {
+          $('#diagnostico').addClass('is-invalid');
+          isFormValid = false;
+        } else {
+          $('#diagnostico').removeClass('is-invalid');
+        }
+        $('#listaEstudios input, #listaPresentaciones input').each(function() {
+          if (!$(this).val()) {
+            $(this).addClass('is-invalid');
+            isValid = false;
+          } else {
+            $(this).removeClass('is-invalid');
+          }
+        });
+
+        if (!isValid || !isFormValid) {
+          alert('Por favor, complete todos los campos.');
+          return;
+        }
         const confirmCreate = confirm('¿Está seguro de que desea crear esta prescripción?');
         if (confirmCreate) {
           $('#prescriptionForm').submit();

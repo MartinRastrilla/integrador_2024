@@ -77,7 +77,7 @@ exports.createUser = async (req,res) => {
             id_profesion,
             id_especialidad
         }, {transaction});
-        res.redirect('/user/crear');
+        res.redirect('/paciente');
         (await transaction).commit();
     } catch (error) {
         await transaction.rollback();
