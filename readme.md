@@ -18,5 +18,3 @@
 - La app raíz inicia en el Login (NO funcional), utilizar el botón "Registrar" para crear un Usuario con Rol de Profesional.
 - Una vez registrado debería mostrar la vista de Pacientes (en caso de no hacerlo, acceder al endpoint `/paciente`).
 - A partir de ese punto deberían estar todas las funcionalidades pedidas trabajando correctamente.
-
-	

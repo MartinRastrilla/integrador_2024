@@ -7,6 +7,7 @@ html(lang="en")
         link(rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
         link(rel="stylesheet" href="/css/login.css")
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+        script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js")
     body 
         .container
             h1 Bienvenido!
@@ -16,7 +17,7 @@ html(lang="en")
 
             div#login-form-container.hidden
                 button#volver-btn.btn.btn-secondary.btn-block.mb-3 Volver
-                form(action="/login" method="POST")
+                form#loginForm
                     .form-group
                         label(for="documento") Documento:
                         input.form-control(type="text" name="documento" id="documento" required)
@@ -37,5 +38,27 @@ html(lang="en")
               });
               $('#registrar-btn').click(function() {
                 window.location.href = '/crear';
+              });
+
+              $('#loginForm').submit(function(event) {
+                  event.preventDefault()
+                  const documento = $('#documento').val();
+                  const password = $('#password').val();
+
+                  $.ajax({
+                      url: '/',
+                      type: 'POST',
+                      contentType: 'application/json',
+                      data: JSON.stringify({ documento, password }),
+                      success: function(response) {
+                          setTimeout(()=>{
+                            window.location.href = '/protected';
+                          },1000)
+                      },
+                      error: function(e) {
+                          const errorMessage = e.responseJSON && e.responseJSON.message ? e.responseJSON.message : 'Error al iniciar sesión';
+                          alert(errorMessage);
+                      }
+                  });
               });
             });

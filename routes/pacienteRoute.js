@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const pacienteControl = require('../controllers/pacienteController');
+const authenticateToken = require('../config/auth');
 
 //CRUD PACIENTE
-router.post('/crear', pacienteControl.createPaciente);
+router.post('/crear',pacienteControl.createPaciente);
 router.post('/:id_paciente', pacienteControl.borrarPaciente);
 
 //MOSTRAR VISTAS

@@ -10,6 +10,7 @@ const Categoria = require('../models/categoriaModel');
 const Familia = require('../models/familiaModel');
 const sequelize = require('../config/database');
 const Estudio = require('../models/estudioModel');
+const User = require('../models/userModel');
 
 exports.mostrarCrearPrescripcion = async (req,res) => {
     try {
@@ -102,4 +103,17 @@ exports.crearPrescripcion = async (req,res) => {
       console.error('Error al obtener prescripción:', error);
       res.status(500).send('Error interno del servidor');
     }
+}
+
+exports.obtenerUserSession = async (req,res) => {
+  const {user} = req.session
+  if (!user) return res.status(403).send('Acceso no autorizado')
+  try {
+      const profesional = await User.findOne({where: {documento: user.documento}});
+
+      res.json({ nombre: profesional.nombre, apellido: profesional.apellido });
+  } catch (error) {
+      res.status(500).json({message: 'Error al obtener usuario: ', error});
+  }
+  
 }

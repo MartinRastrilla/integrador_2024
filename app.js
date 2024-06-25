@@ -2,6 +2,8 @@ const express = require('express');
 const sequelize = require('./config/database');
 const path = require('path');
 const dotenv = require('dotenv');
+const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
 const PORT = 3000;
 const app = express();
 const initializeData = require('./config/initializeData');
@@ -36,12 +38,25 @@ const Prescripcion = require('./models/prescripcionModel');
 const Receta = require('./models/recetaModel');
 
 dotenv.config();
+const SECRET_KEY = process.env.SECRET_KEY
 //MIDDLEWARE PARA PARSEAR DATOS JSON
 app.use(express.json());
 //MIDDLEWARE PARA PARSEAR DATOS DE FORMULARIOS
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 //MIDDLEWARE PARA ACCEDER A ARCHIVOS 'PUBLIC'
 app.use(express.static(path.join(__dirname, 'public')));
+//MIDDLEWARE PARA PARSEAR COOKIES
+app.use(cookieParser());
+//MIDDLEWARE PARA VERIFICACIÓN DE TOKEN
+app.use((req,res,next) =>{
+  const token = req.cookies.access_token;
+  req.session = {user: null}
+  try {
+    const data = jwt.verify(token, SECRET_KEY);
+    req.session.user = data;
+  } catch{}
+  next();
+});
 //CONFIGURACIÓN PARA RENDERIZADO PLANTILLAS PUG
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
