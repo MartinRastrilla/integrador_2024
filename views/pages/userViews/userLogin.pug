@@ -21,6 +21,7 @@ html(lang="en")
                     .form-group
                         label(for="documento") Documento:
                         input.form-control(type="text" name="documento" id="documento" required)
+                        small#documento-error.hidden(style="color: #FFBF00  ;") sólo se permiten números*
                     .form-group
                         label(for="password") Contraseña:
                         input.form-control(type="password" name="password" id="password" required)
@@ -39,6 +40,15 @@ html(lang="en")
               $('#registrar-btn').click(function() {
                 window.location.href = '/crear';
               });
+              
+              $('#documento').on('input', function() {
+                    const value = $(this).val();
+                    if (!/^\d*$/.test(value)) {
+                        $('#documento-error').removeClass('hidden');
+                    } else {
+                        $('#documento-error').addClass('hidden');
+                    }
+                });
 
               $('#loginForm').submit(function(event) {
                   event.preventDefault()
@@ -51,9 +61,7 @@ html(lang="en")
                       contentType: 'application/json',
                       data: JSON.stringify({ documento, password }),
                       success: function(response) {
-                          setTimeout(()=>{
-                            window.location.href = '/protected';
-                          },1000)
+                        window.location.href = '/paciente';
                       },
                       error: function(e) {
                           const errorMessage = e.responseJSON && e.responseJSON.message ? e.responseJSON.message : 'Error al iniciar sesión';

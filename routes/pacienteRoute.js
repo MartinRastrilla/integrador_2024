@@ -4,22 +4,22 @@ const pacienteControl = require('../controllers/pacienteController');
 const authenticateToken = require('../config/auth');
 
 //CRUD PACIENTE
-router.post('/crear',pacienteControl.createPaciente);
-router.post('/:id_paciente', pacienteControl.borrarPaciente);
+router.post('/crear', authenticateToken,pacienteControl.createPaciente);
+router.post('/:id_paciente', authenticateToken, pacienteControl.borrarPaciente);
 
 //MOSTRAR VISTAS
-router.get('/crear', pacienteControl.mostrarCrearPaciente);
-router.get('/editar/:id_paciente', pacienteControl.mostrarEditarPaciente);
-router.get('/prescripcionPaciente/:id_paciente', pacienteControl.mostrarRecetasPaciente);
+router.get('/crear', authenticateToken, pacienteControl.mostrarCrearPaciente);
+router.get('/editar/:id_paciente', authenticateToken, pacienteControl.mostrarEditarPaciente);
+router.get('/prescripcionPaciente/:id_paciente', authenticateToken, pacienteControl.mostrarRecetasPaciente);
+router.get('/', authenticateToken, pacienteControl.obtenerPacientes);
 
 //FUNCIONES DE CONTROL
-router.get('/planes/:id_os', pacienteControl.obtenerPlanesPorOS);
-router.get('/todos', pacienteControl.obtenerTodosPacientes);
-router.get('/', pacienteControl.obtenerPacientes);
-router.get('/buscar', pacienteControl.buscarPacientePorDNI);
-router.get('/descargarPrescripcion/:id_prescripcion', pacienteControl.descargarPrescripcion);
-router.get('/verificarDocumento/:documento', pacienteControl.verificarDocumento);
-router.post('/editar/:id_paciente', pacienteControl.actualizarPaciente);
+router.get('/planes/:id_os', authenticateToken, pacienteControl.obtenerPlanesPorOS);
+router.get('/todos', authenticateToken, pacienteControl.obtenerTodosPacientes);
+router.get('/buscar', authenticateToken, pacienteControl.buscarPacientePorDNI);
+router.get('/descargarPrescripcion/:id_prescripcion', authenticateToken, pacienteControl.descargarPrescripcion);
+router.get('/verificarDocumento/:documento', authenticateToken, pacienteControl.verificarDocumento);
+router.post('/editar/:id_paciente', authenticateToken, pacienteControl.actualizarPaciente);
 
 
 

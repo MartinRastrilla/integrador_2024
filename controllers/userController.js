@@ -56,12 +56,8 @@ exports.createUser = async (req,res) => {
     try {
         const {nombre_user, apellido_user, documento_user, password_user, roles, id_refeps, domicilio, matricula, caducidad, id_profesion, id_especialidad} = req.body;
 
-        console.log('Contraseña ingresada para hash: ', password_user);
-
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password_user,salt);
-
-        console.log('Contraseña hasheada:', hashedPass);
 
         const user = await User.create({
             nombre:nombre_user,
@@ -72,26 +68,29 @@ exports.createUser = async (req,res) => {
         if (roles && roles.length > 0) {
             const rolesArray = Array.isArray(roles) ? roles : [roles];
             for (const rolID of rolesArray) {
-            await UserRol.create({
-                id_user: user.id_user,
-                id_rol: rolID
-            }, {transaction});
+                const rol = await Rol.findByPk(rolID);
+                await UserRol.create({
+                    id_user: user.id_user,
+                    id_rol: rolID
+                }, {transaction});
+
+                if (rol.rol_user === "Profesional") {
+                    const profesional = await Profesional.create({
+                        id_profesional: user.id_user,
+                        id_refeps: id_refeps,
+                        domicilio: domicilio,
+                        matricula: matricula,
+                        caducidad: caducidad
+                    }, {transaction});
+            
+                    const dr_Prof_Esp = await Dr_Prof_Esp.create({
+                        id_profesional: profesional.id_profesional,
+                        id_profesion,
+                        id_especialidad
+                    }, {transaction});
+                }
             }
         }
-        
-        const profesional = await Profesional.create({
-            id_profesional: user.id_user,
-            id_refeps: id_refeps,
-            domicilio: domicilio,
-            matricula: matricula,
-            caducidad: caducidad
-        }, {transaction});
-
-        const dr_Prof_Esp = await Dr_Prof_Esp.create({
-            id_profesional: profesional.id_profesional,
-            id_profesion,
-            id_especialidad
-        }, {transaction});
         await transaction.commit();
         res.redirect('/');
     } catch (error) {
@@ -119,7 +118,6 @@ exports.loginUser = async (req,res) => {
                 sameSite: 'strict'
                 }).send({user, token });
         } else {
-            console.log('Contraseña inválida');
             return res.status(401).json({message: 'Credenciales inválidas'});
         }
 
