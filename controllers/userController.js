@@ -138,3 +138,17 @@ exports.mostrarIndex = async (req,res) =>{
 exports.logout = async (req,res) => {
     res.clearCookie('access_token').redirect('/');
 }
+
+exports.verificarUser = async (req,res) => {
+    try {
+        const {documento} = req.params;
+        const user = await User.findOne({where: {documento: documento}});
+        if (user) {
+            return res.json({exists:true});
+        }
+        res.json({exists:false});
+    } catch (error) {
+        console.error('Error al verificar documento: ', error);
+        res.status(500).json({ message: 'Error al verificar documento' });
+    }
+}

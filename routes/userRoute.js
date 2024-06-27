@@ -10,6 +10,7 @@ router.get('/', userController.mostrarLoginUser);
 router.post('/', userController.loginUser);
 
 router.get('/especialidades/:id_profesion', userController.obtenerEspPorProfesion);
+router.get('/verificarUser/:documento', userController.verificarUser);
 
 router.get('/users', userController.mostrarIndex);
 router.post('/logout', userController.logout);
