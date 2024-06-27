@@ -34,13 +34,14 @@ exports.mostrarCrearPrescripcion = async (req,res) => {
 
 exports.crearPrescripcion = async (req,res) => {
     const transaction = await sequelize.transaction();
+    const {user} = req.session;
     try {
+      const profesional = await User.findOne({where: {documento: user.documento}});
       const {id_paciente, estudios, presentaciones, diagnostico} = req.body;
       const pacienteSelect = await Paciente.findByPk(id_paciente);
-      console.log('Datos recibidos:', req.body);
 
      const prescripcion = await Prescripcion.create({
-       id_profesional: 1,
+       id_profesional: profesional.id_user,
        id_paciente,
        diagnostico
      },{transaction});
@@ -106,7 +107,7 @@ exports.crearPrescripcion = async (req,res) => {
 }
 
 exports.obtenerUserSession = async (req,res) => {
-  const {user} = req.session
+  const {user} = req.session;
   if (!user) return res.status(403).send('Acceso no autorizado')
   try {
       const profesional = await User.findOne({where: {documento: user.documento}});
