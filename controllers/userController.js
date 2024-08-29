@@ -54,7 +54,7 @@ exports.createUser = async (req,res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const {nombre_user, apellido_user, documento_user, password_user, roles, id_refeps, domicilio, matricula, caducidad, id_profesion, id_especialidad} = req.body;
+        const {nombre_user, apellido_user, documento, password_user, roles, id_refeps, domicilio, matricula, caducidad, id_profesion, id_especialidad} = req.body;
 
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password_user,salt);
@@ -62,7 +62,7 @@ exports.createUser = async (req,res) => {
         const user = await User.create({
             nombre:nombre_user,
             apellido:apellido_user,
-            documento:documento_user,
+            documento:documento,
             password:hashedPass
         },{transaction});
         if (roles && roles.length > 0) {

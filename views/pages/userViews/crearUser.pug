@@ -6,44 +6,9 @@ html(lang="en")
         title Crear Usuario
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
         link(rel="stylesheet", href="/css/crearUser.css")
-        script.
-          $(document).ready(function() {
-            $('#checkboxProfesional').change(function() {
-              if ($(this).is(':checked')) {
-                $('#profesionalFields').show();
-              } else {
-                $('#profesionalFields').hide();
-              }
-            });
-          });
-          $(document).ready(function() {
-            $('#profesionSelect').change(function() {
-              const profesionID = $(this).val();
-              if (profesionID) {
-                $.ajax({
-                  url: `/especialidades/${profesionID}`,
-                  method: 'GET',
-                  success: function(data) {
-                    $('#especialidadSelect').empty();
-                    $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
-                    data.forEach(especialidad => {
-                      $('#especialidadSelect').append(new Option(especialidad.nombre_especialidad, especialidad.id_especialidad));
-                    });
-                  },
-                  error: function(err) {
-                    console.error('Error al obtener los especialidades: ', err);
-                  }
-                });
-              } else {
-                $('#especialidadSelect').empty();
-                $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
-              }
-            });
-          });
-
     body
         .container
-            form(action="/crear" method="POST")
+            form#loginForm(action="/crear" method="POST")
               h1 Crear Usuario
               label(for="nombre") Nombre:
               input(type="text", name="nombre_user", required)
@@ -52,9 +17,12 @@ html(lang="en")
               label(for="apellido") Apellido:
               input(type="text", name="apellido_user", required)
               br
-    
+              
+            .form-group
               label(for="documento") Documento:
-              input(type="text", name="documento_user", required)
+              input.form-control(type="text", name="documento", id="documento", required)
+              small#documento-error.hidden(style="color: #FFBF00;") sólo se permiten números*
+              small#non-documento.hidden(style="color: #FFBF00;") documento ya existente*
               br
     
               label(for="contrasena") Contraseña:
@@ -96,3 +64,72 @@ html(lang="en")
                 br
     
               button(type="submit") Crear Usuario
+              
+        script.
+          $(document).ready(function() {
+              let documentoValido = true;
+            $('#checkboxProfesional').change(function() {
+              if ($(this).is(':checked')) {
+                $('#profesionalFields').show();
+              } else {
+                $('#profesionalFields').hide();
+              }
+            });
+            $('#documento').on('input', function() {
+              const value = $(this).val();
+              const isValid = /^\d*$/.test(value);
+              documentoValido = false;
+              
+              if (!isValid) {
+                  $('#documento-error').removeClass('hidden');
+                  $('#documento').addClass('is-invalid');
+                  $('#non-documento').addClass('hidden');
+              } else {
+                  $('#documento-error').addClass('hidden');
+                  $('#documento').removeClass('is-invalid');
+                  
+                  if (value) {
+                      $.ajax({
+                          url: `/verificarUser/${value}`,
+                          method: 'GET',
+                          success: function(data) {
+                              if (data.exists) {
+                                  $('#non-documento').addClass('hidden');
+                                  $('#documento').removeClass('is-invalid');
+                                  documentoValido = false;
+                              } else {
+                                  $('#non-documento').removeClass('hidden');
+                                  $('#documento').addClass('is-invalid');
+                                  documentoValido = true;
+                              }
+                          }
+                      });
+                  } else {
+                      $('#non-documento').addClass('hidden');
+                      $('#documento').removeClass('is-invalid');
+                  }
+              }   
+            });
+            $('#profesionSelect').change(function() {
+              const profesionID = $(this).val();
+              if (profesionID) {
+                $.ajax({
+                  url: `/especialidades/${profesionID}`,
+                  method: 'GET',
+                  success: function(data) {
+                    $('#especialidadSelect').empty();
+                    $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+                    data.forEach(especialidad => {
+                      $('#especialidadSelect').append(new Option(especialidad.nombre_especialidad, especialidad.id_especialidad));
+                    });
+                  },
+                  error: function(err) {
+                    console.error('Error al obtener los especialidades: ', err);
+                  }
+                });
+              } else {
+                $('#especialidadSelect').empty();
+                $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+              }
+            });
+          });
