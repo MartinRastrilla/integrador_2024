@@ -18,7 +18,6 @@ html(lang="en")
               input(type="text", name="apellido_user", required)
               br
               
-            .form-group
               label(for="documento") Documento:
               input.form-control(type="text", name="documento", id="documento", required)
               small#documento-error.hidden(style="color: #FFBF00;") sólo se permiten números*
@@ -93,14 +92,14 @@ html(lang="en")
                           url: `/verificarUser/${value}`,
                           method: 'GET',
                           success: function(data) {
-                              if (data.exists) {
+                              if (!data.exists) {
                                   $('#non-documento').addClass('hidden');
                                   $('#documento').removeClass('is-invalid');
-                                  documentoValido = false;
+                                  documentoValido = true;
                               } else {
                                   $('#non-documento').removeClass('hidden');
                                   $('#documento').addClass('is-invalid');
-                                  documentoValido = true;
+                                  documentoValido = false;
                               }
                           }
                       });
