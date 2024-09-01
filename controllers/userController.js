@@ -54,7 +54,18 @@ exports.createUser = async (req,res) => {
     const transaction = await sequelize.transaction();
 
     try {
-        const {nombre_user, apellido_user, documento, password_user, roles, id_refeps, domicilio, matricula, caducidad, id_profesion, id_especialidad} = req.body;
+        const { 
+            nombre_user, 
+            apellido_user, 
+            documento, 
+            password_user, 
+            roles, 
+            id_refeps, 
+            domicilio, 
+            matricula, 
+            caducidad, 
+            especialidades_list 
+        } = req.body;
 
         const salt = await bcrypt.genSalt(10);
         const hashedPass = await bcrypt.hash(password_user,salt);
@@ -65,6 +76,7 @@ exports.createUser = async (req,res) => {
             documento:documento,
             password:hashedPass
         },{transaction});
+
         if (roles && roles.length > 0) {
             const rolesArray = Array.isArray(roles) ? roles : [roles];
             for (const rolID of rolesArray) {
@@ -82,12 +94,16 @@ exports.createUser = async (req,res) => {
                         matricula: matricula,
                         caducidad: caducidad
                     }, {transaction});
-            
-                    const dr_Prof_Esp = await Dr_Prof_Esp.create({
-                        id_profesional: profesional.id_profesional,
-                        id_profesion,
-                        id_especialidad
-                    }, {transaction});
+
+                    const especialidades = JSON.parse(especialidades_list);
+                    
+                    for (const especialidad of especialidades) {
+                        await Dr_Prof_Esp.create({
+                            id_profesional: profesional.id_profesional,
+                            id_profesion: especialidad.profesionID,
+                            id_especialidad: especialidad.especialidadID
+                        }, {transaction});
+                    }
                 }
             }
         }

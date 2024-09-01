@@ -6,129 +6,217 @@ html(lang="en")
         title Crear Usuario
         script(src="https://code.jquery.com/jquery-3.6.0.min.js")
         link(rel="stylesheet", href="/css/crearUser.css")
+        link(rel="stylesheet", href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css")
+
     body
         .container
-            form#loginForm(action="/crear" method="POST")
-              h1 Crear Usuario
-              label(for="nombre") Nombre:
-              input(type="text", name="nombre_user", required)
-              br
-    
-              label(for="apellido") Apellido:
-              input(type="text", name="apellido_user", required)
-              br
-              
-              label(for="documento") Documento:
-              input.form-control(type="text", name="documento", id="documento", required)
-              small#documento-error.hidden(style="color: #FFBF00;") sólo se permiten números*
-              small#non-documento.hidden(style="color: #FFBF00;") documento ya existente*
-              br
-    
-              label(for="contrasena") Contraseña:
-              input(type="password", name="password_user", required)
-              br
-    
-              each rol in roles  
-                label(for=`checkbox${rol.rol_user}`) #{rol.rol_user}
-                  input(type="checkbox", id=`checkbox${rol.rol_user}`, name="roles" value=rol.id_rol)
-                br
-    
-              #profesionalFields.hidden 
-                label(for="id_refeps") ID_REFEPS:
-                input(type="text", name="id_refeps")
-                br
-    
-                label(for="profesionSelect") Profesión:
-                select#profesionSelect(name="id_profesion")
-                  option(value="") Selecione una profesión
-                    each profesion in profesiones
-                      option(value=profesion.id_profesion) #{profesion.nombre_profesion}
-                br
-    
-                label(for="especialidadSelect") Especialidad:
-                select#especialidadSelect(name="id_especialidad")
-                  option(value="") Seleccione una especialidad
-                br
-    
-                label(for="domicilio") Domicilio:
-                input(type="text", name="domicilio")
-                br
-    
-                label(for="matricula") Matrícula:
-                input(type="text", name="matricula")
-                br
-    
-                label(for="caducidad") Caducidad:
-                input(type="date", name="caducidad")
-                br
-    
-              button(type="submit") Crear Usuario
-              
-        script.
-          $(document).ready(function() {
-              let documentoValido = true;
+            .row
+                .col-md-8
+                    form#loginForm(action="/crear" method="POST")
+                        h1 Crear Usuario
+                        label(for="nombre") Nombre:
+                        input(type="text", name="nombre_user", required)
+                        br
+
+                        label(for="apellido") Apellido:
+                        input(type="text", name="apellido_user", required)
+                        br
+
+                        .form-group
+                            label(for="documento") Documento:
+                            input.form-control(type="text", name="documento", id="documento", required)
+                            small#documento-error.hidden(style="color: #FFBF00;") sólo se permiten números*
+                            small#non-documento.hidden(style="color: #FFBF00;") documento ya existente*
+                            br
+
+                        label(for="contrasena") Contraseña:
+                        input(type="password", name="password_user", required)
+                        br
+
+                        each rol in roles  
+                            label(for=`checkbox${rol.rol_user}`) #{rol.rol_user}
+                            input(type="checkbox", id=`checkbox${rol.rol_user}`, name="roles" value=rol.id_rol)
+                            br
+
+                        #profesionalFields.hidden 
+                            label(for="id_refeps") ID_REFEPS:
+                            input(type="text", name="id_refeps")
+                            br
+
+                            label(for="profesionSelect") Profesión:
+                            select#profesionSelect(name="id_profesion")
+                                option(value="") Selecione una profesión
+                                each profesion in profesiones
+                                    option(value=profesion.id_profesion) #{profesion.nombre_profesion}
+                            br
+
+                            label(for="especialidadSelect") Especialidad:
+                            select#especialidadSelect(name="id_especialidad")
+                                option(value="") Seleccione una especialidad
+                            br
+
+                            button.btn.btn-success#addEspecialidad(type="button") Agregar
+                            br
+
+                            label(for="domicilio") Domicilio:
+                            input(type="text", name="domicilio")
+                            br
+
+                            label(for="matricula") Matrícula:
+                            input(type="text", name="matricula")
+                            br
+
+                            label(for="caducidad") Caducidad:
+                            input(type="date", name="caducidad")
+                            br
+
+                        input#especialidadesList(type="hidden", name="especialidades_list")
+
+                        button.btn.btn-primary(type="submit") Crear Usuario
+
+                .col-md-4  
+                    #selectedEspecialidades.container
+                        h3 Especialidades Seleccionadas
+                        ul#especialidadesDisplayList
+
+block script
+    script(src="https://code.jquery.com/jquery-3.5.1.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js")
+    script(src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js")
+    script.
+        $(document).ready(function() {
+            let documentoValido = true;
             $('#checkboxProfesional').change(function() {
-              if ($(this).is(':checked')) {
-                $('#profesionalFields').show();
-              } else {
-                $('#profesionalFields').hide();
-              }
+                if ($(this).is(':checked')) {
+                    $('#profesionalFields').show();
+                } else {
+                    $('#profesionalFields').hide();
+                }
             });
+
             $('#documento').on('input', function() {
-              const value = $(this).val();
-              const isValid = /^\d*$/.test(value);
-              documentoValido = false;
-              
-              if (!isValid) {
-                  $('#documento-error').removeClass('hidden');
-                  $('#documento').addClass('is-invalid');
-                  $('#non-documento').addClass('hidden');
-              } else {
-                  $('#documento-error').addClass('hidden');
-                  $('#documento').removeClass('is-invalid');
-                  
-                  if (value) {
-                      $.ajax({
-                          url: `/verificarUser/${value}`,
-                          method: 'GET',
-                          success: function(data) {
-                              if (!data.exists) {
-                                  $('#non-documento').addClass('hidden');
-                                  $('#documento').removeClass('is-invalid');
-                                  documentoValido = true;
-                              } else {
-                                  $('#non-documento').removeClass('hidden');
-                                  $('#documento').addClass('is-invalid');
-                                  documentoValido = false;
-                              }
-                          }
-                      });
-                  } else {
-                      $('#non-documento').addClass('hidden');
-                      $('#documento').removeClass('is-invalid');
-                  }
-              }   
+                const value = $(this).val();
+                const isValid = /^\d*$/.test(value);
+                documentoValido = false;
+
+                if (!isValid) {
+                    $('#documento-error').removeClass('hidden');
+                    $('#documento').addClass('is-invalid');
+                    $('#non-documento').addClass('hidden');
+                } else {
+                    $('#documento-error').addClass('hidden');
+                    $('#documento').removeClass('is-invalid');
+
+                    if (value) {
+                        $.ajax({
+                            url: `/verificarUser/${value}`,
+                            method: 'GET',
+                            success: function(data) {
+                                if (!data.exists) {
+                                    $('#non-documento').addClass('hidden');
+                                    $('#documento').removeClass('is-invalid');
+                                    documentoValido = true;
+                                } else {
+                                    $('#non-documento').removeClass('hidden');
+                                    $('#documento').addClass('is-invalid');
+                                    documentoValido = false;
+                                }
+                            }
+                        });
+                    } else {
+                        $('#non-documento').addClass('hidden');
+                        $('#documento').removeClass('is-invalid');
+                    }
+                }   
             });
+
             $('#profesionSelect').change(function() {
-              const profesionID = $(this).val();
-              if (profesionID) {
-                $.ajax({
-                  url: `/especialidades/${profesionID}`,
-                  method: 'GET',
-                  success: function(data) {
+                const profesionID = $(this).val();
+                if (profesionID) {
+                    $.ajax({
+                        url: `/especialidades/${profesionID}`,
+                        method: 'GET',
+                        success: function(data) {
+                            $('#especialidadSelect').empty();
+                            $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+                            data.forEach(especialidad => {
+                                $('#especialidadSelect').append(new Option(especialidad.nombre_especialidad, especialidad.id_especialidad));
+                            });
+                        },
+                        error: function(err) {
+                            console.error('Error al obtener los especialidades: ', err);
+                        }
+                    });
+                } else {
                     $('#especialidadSelect').empty();
                     $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
-                    data.forEach(especialidad => {
-                      $('#especialidadSelect').append(new Option(especialidad.nombre_especialidad, especialidad.id_especialidad));
-                    });
-                  },
-                  error: function(err) {
-                    console.error('Error al obtener los especialidades: ', err);
-                  }
-                });
-              } else {
-                $('#especialidadSelect').empty();
-                $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
-              }
+                }
             });
-          });
+
+            let especialidadesList = [];
+
+            $('#addEspecialidad').click(function (){
+                const profesionID = $('#profesionSelect').val();
+                const profesionNombre = $('#profesionSelect option:selected').text();
+                const especialidadID = $('#especialidadSelect').val();
+                const especialidadNombre = $('#especialidadSelect option:selected').text();
+
+                if (profesionID && especialidadID) {
+                    const entry = {
+                        profesionID: profesionID,
+                        especialidadID: especialidadID,
+                        profesionNombre: profesionNombre,
+                        especialidadNombre: especialidadNombre
+                    }
+
+                    especialidadesList.push(entry);
+                    $('#especialidadesList').val(JSON.stringify(especialidadesList));
+
+                    const listItem = `<li>${profesionNombre} - ${especialidadNombre}</li>`;
+                    $('#especialidadesDisplayList').append(listItem);
+
+                    $('#profesionSelect').val('');
+                    $('#especialidadSelect').empty();
+                    $('#especialidadSelect').append(new Option('Seleccione una especialidad', ''));
+                } else {
+                    alert('Debe seleccionar una profesión y una especialidad');
+                }
+
+            });
+
+            $('#loginForm').submit(function(event) {
+                event.preventDefault();
+
+                if (!documentoValido) {
+                    $('#non-documento').removeClass('hidden');
+                    $('#documento').addClass('is-invalid');
+                } else {
+                    const formData = {
+                        nombre_user: $('input[name="nombre_user"]').val(),
+                        apellido_user: $('input[name="apellido_user"]').val(),
+                        documento: $('input[name="documento"]').val(),
+                        password_user: $('input[name="password_user"]').val(),
+                        roles: $('input[name="roles"]:checked').map(function() { return $(this).val(); }).get(),
+                        especialidades_list: $('#especialidadesList').val(),
+                        id_refeps: $('input[name="id_refeps"]').val(),
+                        domicilio: $('input[name="domicilio"]').val(),
+                        matricula: $('input[name="matricula"]').val(),
+                        caducidad: $('input[name="caducidad"]').val()
+                    };
+
+                    $.ajax({
+                        url: '/crear',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(formData),
+                        success: function(response) {
+                            window.location.href = '/';
+                        },
+                        error: function(e) {
+                            const errorMessage = e.responseJSON && e.responseJSON.message ? e.responseJSON.message : 'Error al crear el usuario';
+                            alert(errorMessage);
+                        }
+                    });
+                }
+            });
+        });

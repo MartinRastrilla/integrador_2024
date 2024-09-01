@@ -7,7 +7,6 @@ const Especialidad = require('./especialidadModel');
 const Dr_Prof_Esp = sequelize.define('Dr_Prof_Esp', {
     id_profesional: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       references: {
         model: Profesional,
         key: 'id_profesional'
@@ -32,7 +31,7 @@ const Dr_Prof_Esp = sequelize.define('Dr_Prof_Esp', {
     indexes: [
       {
         unique: true,
-        fields: ['id_profesional', 'id_especialidad']
+        fields: ['id_profesional', 'id_profesion','id_especialidad']
       }
     ]
   });
