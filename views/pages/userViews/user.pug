@@ -1,0 +1,25 @@
+extends ../../layout
+block content
+    .container
+        h1 Lista de Usuarios
+        a.btn.btn-primary.mb-3(href='/crear') Registrar Usuario
+        table.table.table-striped.table-hover.text-center
+            thead.thead-dark
+                tr
+                    th Nombre
+                    th Documento
+                    th Domicilio
+                    th Acciones
+                    th
+                        button#btnRefresh.btn.btn-primary() Refrescar
+            tbody#usersTable
+                each medico in medicos
+                    tr
+                        td= medico.User.nombre+" "+medico.User.apellido
+                        td= medico.User.documento
+                        td= medico.domicilio
+                        td
+                            a.btn.btn-primary.btn-sm.mr-2(href=`/users/editar/${medico.id_user}`)
+                                i.fa-solid-fa-pencil
+                            a.btn.btn-danger.btn-sm.mr-2(href=`/users/delete/${medico.id_user}`) Borrar
+                            a.btn.btn-primary.btn-sm.mr-2(href=`/users/details/${medico.id_user}`) Detalles

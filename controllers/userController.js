@@ -144,8 +144,12 @@ exports.loginUser = async (req,res) => {
 
 exports.mostrarIndex = async (req,res) =>{
     try {
-        
-        res.render('/pages/userViews/user');
+        const medicos = await Profesional.findAll({
+            include:[
+                {model: User}
+            ]
+        });
+        res.render('pages/userViews/user', {medicos});
     } catch (error) {
         
     }
