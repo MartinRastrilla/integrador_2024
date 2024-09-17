@@ -19,7 +19,10 @@ block content
                         td= medico.User.documento
                         td= medico.domicilio
                         td
-                            a.btn.btn-primary.btn-sm.mr-2(href=`/users/editar/${medico.id_user}`)
-                                i.fa-solid-fa-pencil
-                            a.btn.btn-danger.btn-sm.mr-2(href=`/users/delete/${medico.id_user}`) Borrar
-                            a.btn.btn-primary.btn-sm.mr-2(href=`/users/details/${medico.id_user}`) Detalles
+                            a.btn.btn-primary.btn-sm.mr-2(href=`/users/edit/${medico.User.id_user}`)
+                                i.fas.fa-edit
+                            a.btn.btn-danger.btn-sm.mr-2(href=`/users/delete/${medico.User.id_user}`)
+                                i.fas.fa-trash
+                            a.btn.btn-primary.btn-sm(href=`/users/details/${medico.User.id_user}`)
+                                i.fas.fa-info-circle
+                        td
