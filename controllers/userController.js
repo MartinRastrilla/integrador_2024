@@ -116,6 +116,47 @@ exports.createUser = async (req,res) => {
     }
 }
 
+exports.editUsuario = async (req,res) => {
+    const { id_user } = req.params;
+
+    try {
+        const profesional = await Profesional.findByPk(id_user);
+        const usuario = await User.findByPk(id_user);
+        const rolAsociado = await UserRol.findAll({ 
+            where: { id_user: id_user }}
+        );
+        
+        let roles = [];
+
+        for (let userRol of rolAsociado) {
+            const rol = await Rol.findByPk(userRol.id_rol);
+            if (rol) {
+                roles.push(rol);
+            }
+        }
+
+        const especialidades = await Dr_Prof_Esp.findAll({ where: { id_profesional: id_user },
+            include: [
+                    { model: Profesion },
+                    { model: Especialidad }
+                ]
+        });
+        
+        
+        
+        const profesionesUnicas = [...new Set(especialidades.map(esp => esp.Profesion.nombre_profesion))];
+        
+        if (!usuario) {
+            return res.status(404).send('Usuario no encontrado');
+        }
+
+        res.render('pages/userViews/userEdit', { usuario, profesional, especialidades, roles, profesionesUnicas });
+    } catch (error) {
+        console.error('Error al obtener el editar del usuario:', error);
+        res.status(500).send('Error en el servidor');
+    }
+}
+
 exports.detalleUsuario = async (req, res) => {
     const { id_user } = req.params;
 
