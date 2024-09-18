@@ -116,6 +116,39 @@ exports.createUser = async (req,res) => {
     }
 }
 
+exports.detalleUsuario = async (req, res) => {
+    const { id_user } = req.params;
+
+    try {
+        const profesional = await Profesional.findByPk(id_user);
+        const usuario = await User.findByPk(id_user);
+        const roles = await UserRol.findAll({ where: { id_user: id_user },
+            include: [
+                { model: Rol, as: 'Rol' }
+            ]
+        }
+        );
+        
+        const especialidades = await Dr_Prof_Esp.findAll({ where: { id_profesional: id_user },
+            include: [
+                    { model: Profesion },
+                    { model: Especialidad }
+                ]
+            });
+
+        const profesionesUnicas = [...new Set(especialidades.map(esp => esp.Profesion.nombre_profesion))];
+        
+        if (!usuario) {
+            return res.status(404).send('Usuario no encontrado');
+        }
+
+        res.render('pages/userViews/userDetails', { usuario, profesional, especialidades, roles, profesionesUnicas });
+    } catch (error) {
+        console.error('Error al obtener el detalle del usuario:', error);
+        res.status(500).send('Error en el servidor');
+    }
+};
+
 exports.loginUser = async (req,res) => {
     const { documento, password } = req.body;
     try {

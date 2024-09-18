@@ -11,6 +11,7 @@ router.post('/', userController.loginUser);
 
 router.get('/especialidades/:id_profesion', userController.obtenerEspPorProfesion);
 router.get('/verificarUser/:documento', userController.verificarUser);
+router.get('/users/details/:id_user', userController.detalleUsuario);
 
 router.get('/users', userController.mostrarIndex);
 router.post('/logout', userController.logout);

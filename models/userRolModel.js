@@ -27,6 +27,8 @@ const UserRol = sequelize.define('UserRol', {
     tableName: 'UserRoles'
   });
   
+  UserRol.belongsTo(Rol, { foreignKey: 'id_rol', as: 'Rol' });
+  Rol.hasMany(UserRol, { foreignKey: 'id_rol' });
   User.belongsToMany(Rol, { through: UserRol, foreignKey: 'id_user' });
   Rol.belongsToMany(User, { through: UserRol, foreignKey: 'id_rol' });
   

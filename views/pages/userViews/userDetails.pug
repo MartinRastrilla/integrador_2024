@@ -1,11 +1,40 @@
 extends ../../layout
 
 block content
-    .container
-        h1 Detalles del Paciente
+    .container.mt-5
+        h1 Detalle del Usuario
 
         dl.row
-            each user in users
-                dt.col-sm-2 Nombre
-                dd.col-sm-10 
+            dt.col-sm-3 Nombre:
+            dd.col-sm-9= usuario.nombre
+
+            dt.col-sm-3 Apellido:
+            dd.col-sm-9= usuario.apellido
+
+            dt.col-sm-3 Documento:
+            dd.col-sm-9= usuario.documento
+
+            if profesional
+                dt.col-sm-3 Domicilio:
+                dd.col-sm-9= profesional.domicilio
+
+            dt.col-sm-3 Roles:
+            dd.col-sm-9
+                ul
+                    each rol in roles
+                        li= rol.Rol.rol_user
+
+                dt.col-sm-3 Profesiones:
+                dd.col-sm-9
+                    ul
+                        each profesion in profesionesUnicas
+                            li= profesion
+
+                dt.col-sm-3 Especialidades:
+                dd.col-sm-9
+                    ul
+                        each esp in especialidades
+                            li= esp.Especialidad.nombre_especialidad
+
+        a.btn.btn-primary(href='/users') Volver a la lista de usuarios
             
