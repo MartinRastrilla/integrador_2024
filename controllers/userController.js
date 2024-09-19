@@ -33,22 +33,37 @@ exports.mostrarLoginUser = async (req,res) =>{
     }
 }
 
-exports.obtenerEspPorProfesion = async (req,res) => {
+exports.obtenerEspPorProfesion = async (req, res) => {
     try {
-        const {id_profesion} = req.params;
-        const profesion = await Profesion.findByPk(id_profesion,{
-            include: {
-                model: Especialidad,
-                through: {attributes: []}
-            }
-        });
+        const { id_profesion, nombre_profesion } = req.params;
+
+        let profesion;
+        if (id_profesion) {
+            // Si se pasa el ID de la profesión
+            profesion = await Profesion.findByPk(id_profesion, {
+                include: {
+                    model: Especialidad,
+                    through: { attributes: [] }
+                }
+            });
+        } else if (nombre_profesion) {
+            // Si se pasa el nombre de la profesión
+            profesion = await Profesion.findOne({
+                where: { nombre_profesion: nombre_profesion },
+                include: {
+                    model: Especialidad,
+                    through: { attributes: [] }
+                }
+            });
+        }
+
         const especialidades = profesion ? profesion.Especialidads : [];
         res.json(especialidades);
     } catch (error) {
         console.error('Error al obtener especialidades: ', error);
-        res.status(500).json({message: 'Error al obtener especialidades'});
+        res.status(500).json({ message: 'Error al obtener especialidades' });
     }
-}
+};
 
 exports.createUser = async (req,res) => {
     const transaction = await sequelize.transaction();

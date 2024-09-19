@@ -13,7 +13,6 @@ html(lang="en")
             h1 Bienvenido!
             div#buttons-container.text-center
                 button#ingresar-btn.btn.btn-custom.btn-block.mb-3 Ingresar
-                button#registrar-btn.btn.btn-secondary.btn-block Registrar
 
             div#login-form-container.hidden
                 button#volver-btn.btn.btn-secondary.btn-block.mb-3 Volver
@@ -38,9 +37,6 @@ html(lang="en")
               $('#volver-btn').click(function() {
                 $('#login-form-container').hide();
                 $('#buttons-container').show();
-              });
-              $('#registrar-btn').click(function() {
-                window.location.href = '/crear';
               });
               
               $('#documento').on('input', function() {
@@ -95,7 +91,7 @@ html(lang="en")
                             contentType: 'application/json',
                             data: JSON.stringify({ documento, password }),
                             success: function(response) {
-                                window.location.href = '/paciente';
+                                window.location.href = '/home';
                             },
                             error: function(e) {
                                 const errorMessage = e.responseJSON && e.responseJSON.message ? e.responseJSON.message : 'Error al iniciar sesión';

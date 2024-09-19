@@ -210,7 +210,7 @@ block script
                         contentType: 'application/json',
                         data: JSON.stringify(formData),
                         success: function(response) {
-                            window.location.href = '/';
+                            window.location.href = '/home';
                         },
                         error: function(e) {
                             const errorMessage = e.responseJSON && e.responseJSON.message ? e.responseJSON.message : 'Error al crear el usuario';

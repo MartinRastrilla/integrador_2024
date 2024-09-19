@@ -10,11 +10,13 @@ router.get('/', userController.mostrarLoginUser);
 router.post('/', userController.loginUser);
 
 router.get('/especialidades/:id_profesion', userController.obtenerEspPorProfesion);
-router.get('/verificarUser/:documento', userController.verificarUser);
-router.get('/users/details/:id_user', userController.detalleUsuario);
-router.get('/users/edit/:id_user', userController.editUsuario);
+router.get('/especialidad/:nombre_profesion', userController.obtenerEspPorProfesion);
 
-router.get('/users', userController.mostrarIndex);
+router.get('/verificarUser/:documento', userController.verificarUser);
+router.get('/users/details/:id_user', authenticateToken,userController.detalleUsuario);
+router.get('/users/edit/:id_user', authenticateToken,userController.editUsuario);
+router.get('/users', authenticateToken,userController.mostrarIndex);
+
 router.post('/logout', userController.logout);
 
 router.get('/protected', (req,res) => {

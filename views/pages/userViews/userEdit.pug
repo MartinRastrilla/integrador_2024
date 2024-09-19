@@ -2,149 +2,147 @@ extends ../../layout
 
 block content
     .container.mt-5
-        h1 Editar Usuario
+        .row
+            .col-md-8
+                h1 Editar Usuario
 
-        // Formulario de edición
-        form(action=`/users/${usuario.id_user}/edit` method="POST")
-            // Campo: Nombre
-            .form-group.row
-                label.col-sm-3(for="nombre") Nombre:
-                .col-sm-9
-                    input.form-control(type="text" id="nombre" name="nombre" value=usuario.nombre required)
+                form(method="POST" action=`/users/update/${usuario.id_user}`)
+                    // Formulario de edición de usuario
 
-            // Campo: Apellido
-            .form-group.row
-                label.col-sm-3(for="apellido") Apellido:
-                .col-sm-9
-                    input.form-control(type="text" id="apellido" name="apellido" value=usuario.apellido required)
+                    .form-group
+                        label(for="nombre") Nombre
+                        input.form-control(type="text" id="nombre" name="nombre" value=usuario.nombre)
 
-            // Campo: Documento
-            .form-group.row
-                label.col-sm-3(for="documento") Documento:
-                .col-sm-9
-                    input.form-control(type="text" id="documento" name="documento" value=usuario.documento required)
+                    .form-group
+                        label(for="apellido") Apellido
+                        input.form-control(type="text" id="apellido" name="apellido" value=usuario.apellido)
 
-            // Campo: Domicilio (solo si es profesional)
-            if profesional
-                .form-group.row
-                    label.col-sm-3(for="domicilio") Domicilio:
-                    .col-sm-9
-                        input.form-control(type="text" id="domicilio" name="domicilio" value=profesional.domicilio)
+                    .form-group
+                        label(for="documento") Documento
+                        input.form-control(type="text" id="documento" name="documento" value=usuario.documento)
 
-            // Roles (checkbox para "Profesional" y "Administrador")
-            .form-group.row
-                label.col-sm-3 Roles:
-                .col-sm-9
-                    // Checkbox para Empleado
+                    if profesional
+                        .form-group
+                            label(for="domicilio") Domicilio
+                            input.form-control(type="text" id="domicilio" name="domicilio" value=profesional.domicilio)
+
+                    // Roles (Checkbox)
                     .form-check
-                        input.form-check-input(type="checkbox" id="rolEmpleado" name="roles" value="Empleado"
-                            checked=roles.find(role => role.rol_user === 'Profesional') ? true : false)
-                        label.form-check-label(for="rolEmpleado") Empleado
-
-                    // Checkbox para Administrador
+                        input.form-check-input(type="checkbox" id="rolProfesional" name="roles" value="Profesional" checked=roles.find(role => role.rol_user === 'Profesional') ? true : false)
+                        label.form-check-label(for="rolProfesional") Profesional
+                    
                     .form-check
-                        input.form-check-input(type="checkbox" id="rolAdministrador" name="roles" value="Administrador"
-                            checked=roles.find(role => role.rol_user === 'Admin') ? true : false)
-                        label.form-check-label(for="rolAdministrador") Administrador
-
-            // Profesiones (no editables, solo mostrar)
-            if profesionesUnicas.length > 0
-                .form-group.row
-                    label.col-sm-3 Profesiones:
-                    .col-sm-9
-                        ul
-                            each profesion in profesionesUnicas
-                                li= profesion
-
-            // Especialidades con botón 'Quitar' y lista oculta de especialidades seleccionadas
-            if especialidades.length > 0
-                .form-group.row
-                    label.col-sm-3 Especialidades:
-                    .col-sm-9
-                        ul#especialidades-list
-                            each esp in especialidades
-                                li
-                                    span= esp.Especialidad.nombre_especialidad
-                                    button.btn.btn-danger.btn-sm.ml-2(type="button" onclick=`removeEspecialidad('${esp.Especialidad.nombre_especialidad}')`) Quitar
-
-                        // Lista oculta de especialidades
-                        each esp in especialidades
-                            input(type="hidden" name="especialidades[]" value=esp.Especialidad.nombre_especialidad)
-
-            // Campo para agregar especialidades manualmente
-            .form-group.row
-                label.col-sm-3(for="nuevaEspecialidad") Agregar especialidad:
-                .col-sm-9
-                    input.form-control(type="text" id="nuevaEspecialidad" placeholder="Nombre de la especialidad")
-                    button.btn.btn-success.btn-sm.mt-2(type="button" onclick="agregarEspecialidad()") Agregar
-
-            // Botones de acción (Guardar y Cancelar)
-            .form-group.row
-                .col-sm-9.offset-sm-3
-                    button.btn.btn-primary(type="submit") Guardar
+                        input.form-check-input(type="checkbox" id="rolAdmin" name="roles" value="Admin" checked=roles.find(role => role.rol_user === 'Admin') ? true : false)
+                        label.form-check-label(for="rolAdmin") Admin
+                    
+                    // Botones de Guardar y Cancelar
+                    button.btn.btn-success(type="submit") Guardar
                     a.btn.btn-secondary(href='/users') Cancelar
 
-    // Script para manejar las especialidades
+            // Panel lateral derecho para Profesiones
+            .col-md-4
+                h3 Profesiones
+
+                each profesion in profesionesUnicas
+                    .panel.panel-default
+                        .panel-heading
+                            h4.nombre_profesion= profesion
+                        .panel-body
+                            if especialidades.length > 0
+                                ul.list-group
+                                    each esp in especialidades.filter(e => e.Profesion.nombre_profesion === profesion)
+                                        li.list-group-item(data-especialidad=esp.Especialidad.nombre_especialidad)
+                                            span= esp.Especialidad.nombre_especialidad
+                                            button.btn.btn-danger.float-right(data-especialidad=esp.Especialidad.nombre_especialidad)
+                                                i.fa.fa-trash
+                            else
+                                p No hay especialidades asignadas.
+
+                            // Botón para agregar especialidades
+                            .form-group
+                                select.form-control.especialidadesSelect(data-profesion=profesion)
+                                    option(value="") -- Selecciona una especialidad --
+                                    // Aquí se cargan las especialidades dinámicamente vía AJAX
+
+                                button.btn.btn-primary.add-especialidad(data-profesion=profesion)
+                                    i.fa.fa-plus
+
+    script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+
     script.
-        function removeEspecialidad(especialidadNombre) {
-            // Remover la especialidad de la lista visible
-            const especialidadItems = document.querySelectorAll('#especialidades-list li');
-            especialidadItems.forEach(item => {
-                if (item.querySelector('span').textContent === especialidadNombre) {
-                    item.remove();
+        // Lógica para eliminar especialidad usando AJAX
+        $(document).ready(function() {
+            // Funcionalidad para eliminar especialidad
+            $('.btn-danger').on('click', function() {
+                const especialidad = $(this).data('especialidad');
+                const idUser = #{usuario.id_user};  // Obtén el id_user del usuario actual
+                const listItem = $(this).closest('li');  // El li correspondiente a esta especialidad
+
+                if (confirm('¿Estás seguro de que deseas eliminar esta especialidad?')) {
+                    $.ajax({
+                        url: `/users/deleteProfesion/${idUser}/${especialidad}`,
+                        type: 'POST',  // O DELETE si tienes esa ruta configurada en tu servidor
+                        success: function(response) {
+                            alert('Especialidad eliminada exitosamente');
+                            listItem.remove();  // Eliminar el li correspondiente sin recargar la página
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error al eliminar la especialidad: ' + xhr.responseText);
+                        }
+                    });
                 }
             });
 
-            // Remover el campo hidden de la especialidad
-            const hiddenInputs = document.querySelectorAll('input[type="hidden"][name="especialidades[]"]');
-            hiddenInputs.forEach(input => {
-                if (input.value === especialidadNombre) {
-                    input.remove();
-                }
+            // Cargar especialidades al seleccionar una profesión
+            $('.panel-body').each(function() {
+                const profesion = $(this).closest('.panel').find('.nombre_profesion').text(); // Obtener el nombre de la profesión
+                const selectElement = $(this).find('.especialidadesSelect');
+
+                $.ajax({
+                    url: `/especialidad/${profesion}`,  // Utilizamos el nombre de la profesión para hacer la solicitud
+                    type: 'GET',
+                    success: function(especialidades) {
+                        especialidades.forEach(function(esp) {
+                            selectElement.append(new Option(esp.nombre_especialidad, esp.id_especialidad));
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error al cargar especialidades:', error);
+                    }
+                });
             });
-        }
 
-        function agregarEspecialidad() {
-            const nuevaEspecialidad = document.getElementById('nuevaEspecialidad').value.trim();
+            // Agregar especialidad a una profesión
+            $('.add-especialidad').on('click', function() {
+                const idUser = #{usuario.id_user};
+                const profesion = $(this).data('profesion');
+                const especialidadId = $(this).siblings('.especialidadesSelect').val();
+                const especialidadNombre = $(this).siblings('.especialidadesSelect').find('option:selected').text();
+                const panelBody = $(this).closest('.panel-body');
 
-            // Verificar que la especialidad no esté vacía
-            if (nuevaEspecialidad === '') {
-                alert('Por favor, ingrese una especialidad.');
-                return;
-            }
-
-            // Verificar si ya existe la especialidad en la lista visible
-            const especialidadItems = document.querySelectorAll('#especialidades-list li span');
-            for (let item of especialidadItems) {
-                if (item.textContent === nuevaEspecialidad) {
-                    alert('Esta especialidad ya está agregada.');
+                if (!especialidadId) {
+                    alert('Por favor, selecciona una especialidad.');
                     return;
                 }
-            }
 
-            // Agregar la especialidad a la lista visible
-            const especialidadesList = document.getElementById('especialidades-list');
-            const li = document.createElement('li');
-            const span = document.createElement('span');
-            const button = document.createElement('button');
-
-            span.textContent = nuevaEspecialidad;
-            button.textContent = 'Quitar';
-            button.className = 'btn btn-danger btn-sm ml-2';
-            button.type = 'button';
-            button.onclick = function() { removeEspecialidad(nuevaEspecialidad); };
-
-            li.appendChild(span);
-            li.appendChild(button);
-            especialidadesList.appendChild(li);
-
-            // Agregar un input hidden con la especialidad
-            const inputHidden = document.createElement('input');
-            inputHidden.type = 'hidden';
-            inputHidden.name = 'especialidades[]';
-            inputHidden.value = nuevaEspecialidad;
-
-            document.querySelector('form').appendChild(inputHidden);
-
-            // Limpiar el campo de entrada de nueva especialidad
-            document.getElementById('nuevaEspecialidad').value = '';
+                $.ajax({
+                    url: `/users/addEspecialidad/${idUser}/${profesion}/${especialidadId}`,
+                    type: 'POST',
+                    success: function(response) {
+                        alert('Especialidad añadida exitosamente');
+                        // Agregar la especialidad al listado en la interfaz
+                        panelBody.find('ul.list-group').append(`
+                            <li class="list-group-item" data-especialidad="${especialidadNombre}">
+                                ${especialidadNombre}
+                                <button class="btn btn-danger float-right" data-especialidad="${especialidadNombre}">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </li>
+                        `);
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al agregar la especialidad: ' + xhr.responseText);
+                    }
+                });
+            });
+        });
