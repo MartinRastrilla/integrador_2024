@@ -131,6 +131,83 @@ exports.createUser = async (req,res) => {
     }
 }
 
+exports.addEspecialidad = async (req, res) => {
+    const { id_user, profesion, especialidadId } = req.params;
+    
+
+    try {
+        // Encontrar el ID de la profesión basado en el nombre
+        const profesionEncontrada = await Profesion.findOne({ where: { nombre_profesion: profesion } });
+        
+        if (!profesionEncontrada) {
+            return res.status(404).json({ message: 'Profesión no encontrada' });
+        }
+
+        // Verificar si ya existe la relación entre profesional, profesión y especialidad
+        const existeRelacion = await Dr_Prof_Esp.findOne({
+            where: {
+                id_profesional: id_user,
+                id_profesion: profesionEncontrada.id_profesion,
+                id_especialidad: especialidadId
+            }
+        });
+
+        if (existeRelacion) {
+            return res.status(400).json({ message: 'Esta especialidad ya está asignada a este profesional.' });
+        }
+
+        // Crear la nueva relación en la tabla intermedia
+        await Dr_Prof_Esp.create({
+            id_profesional: id_user,
+            id_profesion: profesionEncontrada.id_profesion,
+            id_especialidad: especialidadId
+        });
+
+        res.status(200).json({ message: 'Especialidad añadida exitosamente.' });
+    } catch (error) {
+        console.error('Error al agregar la especialidad:', error);
+        res.status(500).json({ message: 'Error al agregar la especialidad' });
+    }
+};
+
+exports.deleteEspecialidad = async (req, res) => {
+    const { id_user, especialidad } = req.params;
+
+    try {
+        // Encontrar la especialidad por su nombre
+        const especialidadEncontrada = await Especialidad.findOne({ where: { nombre_especialidad: especialidad } });
+
+        if (!especialidadEncontrada) {
+            return res.status(404).json({ message: 'Especialidad no encontrada' });
+        }
+
+        // Encontrar la relación entre el profesional y la especialidad en la tabla intermedia
+        const relacionEncontrada = await Dr_Prof_Esp.findOne({
+            where: {
+                id_profesional: id_user,
+                id_especialidad: especialidadEncontrada.id_especialidad
+            }
+        });
+
+        if (!relacionEncontrada) {
+            return res.status(404).json({ message: 'La especialidad no está asignada a este profesional.' });
+        }
+
+        // Eliminar la relación
+        await Dr_Prof_Esp.destroy({
+            where: {
+                id_profesional: id_user,
+                id_especialidad: especialidadEncontrada.id_especialidad
+            }
+        });
+
+        res.status(200).json({ message: 'Especialidad eliminada exitosamente.' });
+    } catch (error) {
+        console.error('Error al eliminar la especialidad:', error);
+        res.status(500).json({ message: 'Error al eliminar la especialidad' });
+    }
+};
+
 exports.editUsuario = async (req,res) => {
     const { id_user } = req.params;
 

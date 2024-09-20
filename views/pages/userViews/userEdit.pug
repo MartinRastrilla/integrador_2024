@@ -81,7 +81,7 @@ block content
                 if (confirm('¿Estás seguro de que deseas eliminar esta especialidad?')) {
                     $.ajax({
                         url: `/users/deleteProfesion/${idUser}/${especialidad}`,
-                        type: 'POST',  // O DELETE si tienes esa ruta configurada en tu servidor
+                        type: 'POST',
                         success: function(response) {
                             alert('Especialidad eliminada exitosamente');
                             listItem.remove();  // Eliminar el li correspondiente sin recargar la página
@@ -115,7 +115,7 @@ block content
             // Agregar especialidad a una profesión
             $('.add-especialidad').on('click', function() {
                 const idUser = #{usuario.id_user};
-                const profesion = $(this).data('profesion');
+                const profesion = $(this).closest('.panel').find('.nombre_profesion').text();
                 const especialidadId = $(this).siblings('.especialidadesSelect').val();
                 const especialidadNombre = $(this).siblings('.especialidadesSelect').find('option:selected').text();
                 const panelBody = $(this).closest('.panel-body');
@@ -141,7 +141,12 @@ block content
                         `);
                     },
                     error: function(xhr, status, error) {
-                        alert('Error al agregar la especialidad: ' + xhr.responseText);
+                        if (xhr.status === 400 && xhr.responseJSON && xhr.responseJSON.message) {
+                            // Mostrar mensaje si la especialidad ya está asignada
+                            alert(xhr.responseJSON.message);
+                        } else {
+                            alert('Error al agregar la especialidad: ' + error);
+                        }
                     }
                 });
             });

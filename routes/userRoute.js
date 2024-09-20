@@ -9,12 +9,14 @@ router.post('/crear', authenticateToken,userController.createUser);
 router.get('/', userController.mostrarLoginUser);
 router.post('/', userController.loginUser);
 
+router.get('/users/edit/:id_user', authenticateToken,userController.editUsuario);
 router.get('/especialidades/:id_profesion', userController.obtenerEspPorProfesion);
 router.get('/especialidad/:nombre_profesion', userController.obtenerEspPorProfesion);
+router.post('/users/addEspecialidad/:id_user/:profesion/:especialidadId', authenticateToken,userController.addEspecialidad);
+router.post('/users/deleteProfesion/:id_user/:especialidad', authenticateToken,userController.deleteEspecialidad);
 
 router.get('/verificarUser/:documento', userController.verificarUser);
 router.get('/users/details/:id_user', authenticateToken,userController.detalleUsuario);
-router.get('/users/edit/:id_user', authenticateToken,userController.editUsuario);
 router.get('/users', authenticateToken,userController.mostrarIndex);
 
 router.post('/logout', userController.logout);
