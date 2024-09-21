@@ -9,6 +9,7 @@ block content
                     th Nombre
                     th Documento
                     th Domicilio
+                    th En Servicio
                     th Acciones
                     th
                         button#btnRefresh.btn.btn-primary() Refrescar
@@ -19,10 +20,60 @@ block content
                         td= medico.User.documento
                         td= medico.domicilio
                         td
+                            if medico.User.activo
+                                span.text-success Activo
+                            else
+                                span.text-danger Desactivado
+                        td
                             a.btn.btn-primary.btn-sm.mr-2(href=`/users/edit/${medico.User.id_user}`)
                                 i.fas.fa-edit
-                            a.btn.btn-danger.btn-sm.mr-2(href=`/users/delete/${medico.User.id_user}`)
-                                i.fas.fa-trash
+                            if medico.User.activo
+                                button.btn.btn-danger.btn-sm.mr-2.delete-user(data-id=medico.User.id_user)
+                                    i.fas.fa-trash
+                            else
+                                button.btn.btn-success.btn-sm.mr-2.active-user(data-id=medico.User.id_user)
+                                    i.fas.fa-user-plus
+                                
                             a.btn.btn-primary.btn-sm(href=`/users/details/${medico.User.id_user}`)
                                 i.fas.fa-info-circle
                         td
+
+    script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+    script.
+        $(document).ready(function() {
+            // Confirmar eliminación de usuario
+            $('.delete-user').on('click', function() {
+                const userId = $(this).data('id');
+    
+                if (confirm('¿Estás seguro de que deseas desactivar este usuario?')) {
+                    $.ajax({
+                        url: `/users/delete/${userId}`,
+                        type: 'POST',
+                        success: function(response) {
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error al desactivar el usuario: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+            $('.active-user').on('click', function() {
+                const userId = $(this).data('id');
+    
+                if (confirm('¿Estás seguro de que deseas activar este usuario?')) {
+                    $.ajax({
+                        url: `/users/activar/${userId}`,
+                        type: 'POST',
+                        success: function(response) {
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Error al desactivar el usuario: ' + xhr.responseText);
+                        }
+                    });
+                }
+            });
+        });

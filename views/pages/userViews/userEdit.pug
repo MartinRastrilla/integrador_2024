@@ -5,8 +5,8 @@ block content
         .row
             .col-md-8
                 h1 Editar Usuario
-
-                form(method="POST" action=`/users/update/${usuario.id_user}`)
+                #error-message.alert.alert-danger.hidden(style="display:none;") Usuario debe poseer al menos un rol
+                form(id="editUserForm" method="POST" action=`/users/edit/${usuario.id_user}`)
                     // Formulario de edición de usuario
 
                     .form-group
@@ -25,6 +25,12 @@ block content
                         .form-group
                             label(for="domicilio") Domicilio
                             input.form-control(type="text" id="domicilio" name="domicilio" value=profesional.domicilio)
+                        .form-group
+                            label(for="id_refeps") ID Refeps
+                            input.form-control(type="text" id="id_refeps" name="id_refeps" value=profesional.id_refeps)
+                        .form-group
+                            label(for="matricula") Matrícula
+                            input.form-control(type="text" id="matricula" name="matricula" value=profesional.matricula)
 
                     // Roles (Checkbox)
                     .form-check
@@ -72,6 +78,23 @@ block content
     script.
         // Lógica para eliminar especialidad usando AJAX
         $(document).ready(function() {
+            // Capturamos el submit del formulario
+            $('#editUserForm').on('submit', function(e) {
+                // Ocultamos el mensaje de error al inicio
+                $('#error-message').hide();
+
+                // Verificamos si hay algún checkbox de rol seleccionado
+                const rolesSeleccionados = $('input[name="roles"]:checked').length;
+
+                if (rolesSeleccionados === 0) {
+                    // Mostramos el mensaje de error
+                    $('#error-message').show();
+
+                    // Prevenimos el envío del formulario
+                    e.preventDefault();
+                }
+            });
+
             // Funcionalidad para eliminar especialidad
             $('.btn-danger').on('click', function() {
                 const especialidad = $(this).data('especialidad');

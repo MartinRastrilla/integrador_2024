@@ -249,6 +249,136 @@ exports.editUsuario = async (req,res) => {
     }
 }
 
+// Controlador para guardar la edición del usuario
+exports.guardarEdicion = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    const { id_user } = req.params;
+    const { nombre, apellido, documento, roles, id_refeps, domicilio, matricula } = req.body;
+    console.log("-----------ROLES:"+roles);
+    
+    try {
+        // Buscar al usuario por ID
+        const usuario = await User.findByPk(id_user);
+        if (!usuario) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+        const profesional = await Profesional.findByPk(id_user);
+        if (!profesional) {
+            return res.status(404).json({ message: 'Profesional no encontrado' });
+        }
+        // Actualizar los datos del usuario
+        usuario.nombre = nombre;
+        usuario.apellido = apellido;
+        usuario.documento = documento;
+        
+
+        // Actualizar los datos del profesional
+        profesional.domicilio = domicilio;
+        profesional.matricula = matricula;
+        profesional.id_refeps = id_refeps;
+        
+        await usuario.save({ transaction });  // Guardar los cambios en la base de datos
+        await profesional.save( { transaction } );
+
+        // Actualizar los roles del usuario
+        // Primero, eliminamos todos los roles actuales del usuario
+        await UserRol.destroy({ where: { id_user: id_user } }, { transaction });
+
+        // Luego, agregamos los nuevos roles seleccionados en el formulario
+        if (roles && Array.isArray(roles)) {
+            for (const rol of roles) {
+                const rolEncontrado = await Rol.findOne({ where: { rol_user: rol } });
+                if (rolEncontrado) {
+                    await UserRol.create({ id_user: id_user, id_rol: rolEncontrado.id_rol }, { transaction });
+                }
+            }
+        }else if(!Array.isArray(roles)){
+            const rolEncontrado = await Rol.findOne({ where: { rol_user: roles } });
+            if (rolEncontrado) {
+                await UserRol.create({ id_user: id_user, id_rol: rolEncontrado.id_rol }, { transaction });
+            }
+        }
+        // Confirmar la transacción
+        await transaction.commit();
+        // Redirigir al usuario a la lista de usuarios con un mensaje de éxito
+        res.redirect('/users?message=Usuario actualizado exitosamente');
+    } catch (error) {
+        // Rollback la transacción en caso de error
+        await transaction.rollback();
+        console.error('Error al guardar la edición del usuario:', error);
+        res.status(500).json({ message: 'Error al actualizar el usuario' });
+    }
+};
+
+exports.deleteUser = async (req, res) => {
+    const {id_user} = req.params;
+    const transaction = await sequelize.transaction();
+    try {
+        // Buscar el usuario por su ID
+        const user = await User.findOne({ where: { id_user: id_user } });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Marcar el usuario como inactivo
+        user.activo = false;
+        await user.save({ transaction });
+
+        // Verificar si el usuario tiene un perfil de Profesional asociado
+        const profesional = await Profesional.findOne({ where: { id_profesional: id_user } });
+
+        if (profesional) {
+            // Marcar el profesional como inactivo si existe
+            profesional.activo = false;
+            await profesional.save({ transaction });
+        }
+
+        // Confirmar la transacción
+        await transaction.commit();
+        return res.status(200).json({ message: 'Usuario desactivado correctamente' });
+    } catch (error) {
+        await transaction.rollback();
+        console.error('Error al desactivar el usuario:', error);
+        return res.status(500).json({ message: 'Error al desactivar el usuario' });
+    }
+};
+
+exports.activarUser = async (req, res) => {
+    const {id_user} = req.params;
+    const transaction = await sequelize.transaction();
+    try {
+        // Buscar el usuario por su ID
+        const user = await User.findOne({ where: { id_user: id_user } });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Usuario no encontrado' });
+        }
+
+        // Marcar el usuario como inactivo
+        user.activo = true;
+        await user.save({ transaction });
+
+        // Verificar si el usuario tiene un perfil de Profesional asociado
+        const profesional = await Profesional.findOne({ where: { id_profesional: id_user } });
+
+        if (profesional) {
+            // Marcar el profesional como inactivo si existe
+            profesional.activo = true;
+            await profesional.save({ transaction });
+        }
+
+        // Confirmar la transacción
+        await transaction.commit();
+        return res.status(200).json({ message: 'Usuario activado correctamente' });
+    } catch (error) {
+        await transaction.rollback();
+        console.error('Error al desactivar el usuario:', error);
+        return res.status(500).json({ message: 'Error al activar el usuario' });
+    }
+};
+
+
 exports.detalleUsuario = async (req, res) => {
     const { id_user } = req.params;
 

@@ -17,7 +17,7 @@ const Profesion = require('./models/profesionModel');
 const Especialidad = require('./models/especialidadModel');
 const Profesion_especialidad = require('./models/profesion_especialidad_Model');
 const Profesional_profesion_especilidad = require('./models/profesional_profesion_especialidad_mode');
-
+const ProfesionalPaciente = require('./models/ProfesionalPacienteModel');
 const Paciente = require('./models/pacienteModel');
 const ObraSocial = require('./models/obrasocialModel');
 const Plan = require('./models/planModel');

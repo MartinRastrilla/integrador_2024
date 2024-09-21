@@ -14,6 +14,9 @@ router.get('/especialidades/:id_profesion', userController.obtenerEspPorProfesio
 router.get('/especialidad/:nombre_profesion', userController.obtenerEspPorProfesion);
 router.post('/users/addEspecialidad/:id_user/:profesion/:especialidadId', authenticateToken,userController.addEspecialidad);
 router.post('/users/deleteProfesion/:id_user/:especialidad', authenticateToken,userController.deleteEspecialidad);
+router.post('/users/edit/:id_user', authenticateToken,userController.guardarEdicion);
+router.post('/users/delete/:id_user', authenticateToken,userController.deleteUser);
+router.post('/users/activar/:id_user', authenticateToken,userController.activarUser);
 
 router.get('/verificarUser/:documento', userController.verificarUser);
 router.get('/users/details/:id_user', authenticateToken,userController.detalleUsuario);
