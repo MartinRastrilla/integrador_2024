@@ -11,10 +11,22 @@ const Familia = require('../models/familiaModel');
 const sequelize = require('../config/database');
 const Estudio = require('../models/estudioModel');
 const User = require('../models/userModel');
+const ProfesionalPaciente = require('../models/ProfesionalPacienteModel');
 
 exports.mostrarCrearPrescripcion = async (req,res) => {
     try {
-        const pacientes = await Paciente.findAll({where: {activo:true}});
+        const {user} = req.session;
+        if (!user) return res.status(403).send('Acceso no autorizado');
+
+        const [pacientes, metadata] = await sequelize.query(`
+          SELECT p.id_paciente, p.nombre_paciente, p.apellido_paciente, p.documento_paciente, p.fecha_nac, p.sexo_paciente
+          FROM pacientes p
+          INNER JOIN profesional_paciente pp ON p.id_paciente = pp.id_paciente
+          WHERE p.activo = true AND pp.id_profesional = :id_profesional
+        `, {
+            replacements: { id_profesional: user.id }
+        });
+      
         const estudios = await Estudio.findAll({where: {activo:true}});
         const presentaciones = await Presentacion.findAll({
           include: [
