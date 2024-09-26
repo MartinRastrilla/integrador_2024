@@ -123,18 +123,27 @@ exports.mostrarActualizarOS = async (req, res) => {
 
 exports.actualizarOS = async (req, res) => {
     try {
-        const { id_os, planes } = req.params;
-        const { nombre_os } = req.body;
+        const { id_os } = req.params; // Aquí obtenemos el ID de la obra social desde los parámetros
+        const { nombre_os, planes } = req.body; // Obtenemos nombre de la obra social y planes desde req.body
+
+        // Buscamos la obra social
         const obraSocial = await ObraSocial.findByPk(id_os);
         if (!obraSocial) {
             return res.status(404).json({ message: 'Obra Social no encontrada' });
         }
-        const planesArray = planes;
 
+        // Convertimos los planes en un array (en caso de que venga como JSON string)
+        const planesArray = JSON.parse(planes); 
+
+        // Eliminamos todos los planes asociados a la obra social
         await obraSocial_plan.destroy({ where: { id_os: id_os } });
+
+        // Si existen planes en el array
         if (Array.isArray(planesArray)) {
             for (const plan of planesArray) {
                 let planExistente = await Plan.findOne({ where: { plan: plan } });
+                
+                // Si el plan no existe, lo creamos
                 if (!planExistente) {
                     const nuevoPlan = await Plan.create({ plan: plan });
                     await obraSocial_plan.create({ id_os: id_os, id_plan: nuevoPlan.id_plan });
@@ -143,11 +152,37 @@ exports.actualizarOS = async (req, res) => {
                 }
             }
         }
+
+        // Actualizamos el nombre de la obra social
         obraSocial.nombre_os = nombre_os;
         await obraSocial.save();
+
         res.redirect('/obraSocial');
     } catch (error) {
         console.error('Error al actualizar Obra Social: ', error);
         res.status(500).json({ message: 'Error al actualizar Obra Social' });
     }
 };
+
+exports.obtenerTodasOS = async (req, res) => {
+    try {
+        const obras_sociales = await ObraSocial.findAll();
+        res.json(obras_sociales);
+    } catch (error) {
+        console.error('Error al mostrar la creación de Obra Social: ', error);
+        res.status(500).json({ message: "Error al mostrar 'Crear'" });
+    }
+}
+
+exports.verificarNombreOS = async (req, res) => {
+    try {
+        const { nombre_os } = req.params;
+        const obraSocial = await ObraSocial.findOne({ where: { nombre_os: nombre_os } });
+        if (obraSocial) {
+            return res.json({ message: 'El nombre de la obra social ya existe' });
+        }
+    } catch (error) {
+        console.error('Error al verificar el nombre de la obra social: ', error);
+        res.status(500).json({ message: 'Error al verificar el nombre de la obra social' });
+    }
+}
