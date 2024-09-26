@@ -3,8 +3,8 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const {authenticateToken, authenticateAdmin } = require('../config/auth');
 
-router.get('/crear', authenticateToken,userController.mostrarCrearUser);
-router.post('/crear', authenticateToken,userController.createUser);
+router.get('/crear', authenticateToken,authenticateAdmin,userController.mostrarCrearUser);
+router.post('/crear', authenticateToken,authenticateAdmin,userController.createUser);
 
 router.get('/', userController.mostrarLoginUser);
 router.post('/', userController.loginUser);

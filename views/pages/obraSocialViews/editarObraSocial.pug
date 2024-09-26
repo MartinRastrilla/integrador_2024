@@ -10,7 +10,7 @@ block content
                 form#editarOSForm(action=`/obraSocial/editar/${obraSocial.id_os}` method="POST")
                     .form-group
                         label(for="nombre_os") Nombre de la Obra Social
-                        input#nombre_os.form-control(type="text" id="nombre_os" name="nombre_os" value=obraSocial.nombre_os required)
+                        input.form-control(type="text" id="nombre_os" name="nombre_os" value=obraSocial.nombre_os required)
                     
                     // Lista de planes existentes
                     .form-group
@@ -49,9 +49,6 @@ block scripts
             // Actualizar el campo hidden con los planes iniciales
             $('#planesHidden').val(JSON.stringify(planes));
 
-            $('#nombre_os').on('change', function(){
-                const nombreOS = $('#nombre_os').val();
-            });
 
             // Evento para agregar un nuevo plan
             $('#addPlanBtn').on('click', function() {

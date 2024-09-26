@@ -24,13 +24,13 @@ block content
           option(value='Femenino' selected=paciente[0].sexo_paciente === 'Femenino') Femenino
           option(value='Otro' selected=paciente[0].sexo_paciente !== 'Masculino' && paciente[0].sexo_paciente !== 'Femenino') Otro
       .form-group  
-        label(for="sexo_paciente") Sexo
+        label(for="sexo_paciente") Obra Social
         select#obraSocialSelect.form-control(name="id_os", required)  
           each os in obras_sociales
             option(value=os.id_os selected=paciente[0].nombre_os === os.nombre_os) #{os.nombre_os}
       .form-group
         label(for="planSelect") Plan
-        select#planSelect.form-control(name="id_plan", required) 
+        select#planSelect.form-control(name="id_plan") 
           option(value="") #{paciente[0].plan}
 
         button.btn.btn-primary(type='submit') Actualizar
