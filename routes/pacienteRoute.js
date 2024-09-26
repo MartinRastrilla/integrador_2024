@@ -24,7 +24,4 @@ router.post('/editar/:id_paciente', authenticateToken, pacienteControl.actualiza
 
 
 
-
-
-
 module.exports = router;

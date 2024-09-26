@@ -68,6 +68,7 @@ const userRouter = require('./routes/userRoute');
 const profesionalRouter = require('./routes/profesionalRoute');
 const medicamentoRouter = require('./routes/medicamentoRoute');
 const estudioRouter = require('./routes/estudiosRoute');
+const obraSocialRouter = require('./routes/obraSocialRoute');
 const homeRouter = require('./routes/homeRoute');
 
 //RUTAS
@@ -77,6 +78,7 @@ app.use('/profesional', profesionalRouter);
 app.use('/medicamentos', medicamentoRouter);
 app.use('/estudios', estudioRouter);
 app.use('/home', homeRouter);
+app.use('/obraSocial', obraSocialRouter);
 
 
 //SINCRONIZACIÓN DE TABLAS

@@ -1,0 +1,74 @@
+extends ../../layout
+
+block content
+  .container
+    h1 Crear Obra Social
+    
+    //- Formulario de creación de obra social
+    form#crearOSForm(action="/obraSocial/crear" method="POST")
+      .row
+        .col-md-6
+          //- Campo para ingresar el nombre de la obra social
+          .form-group
+            label(for="nombre_os") Nombre de la Obra Social
+            input#nombre_os.form-control(type="text" name="nombre_os" required)
+
+          //- Campo para ingresar un nuevo plan
+          .form-group
+            label(for="plan") Nombre del Plan
+            .input-group
+              input#plan.form-control(type="text" placeholder="Agregar un nuevo plan")
+              .input-group-append
+                button#addPlanBtn.btn.btn-success(type="button")
+                  i.fa.fa-plus
+                  
+          //- Campo hidden que enviará los planes en el formulario
+          input#planesHidden(type="hidden" name="planes")
+
+        .col-md-6
+          //- Panel que muestra los planes agregados
+          h3 Planes agregados
+          ul#planesList.list-group
+
+      //- Botones de enviar y cancelar
+      .form-group.mt-4
+        button.btn.btn-primary(type="submit") Agregar Obra Social
+        span   
+        a.btn.btn-secondary(href="/obraSocial") Cancelar
+
+block scripts
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script.
+    $(document).ready(function() {
+      let planes = [];
+
+      // Evento al hacer clic en el botón de agregar plan
+      $('#addPlanBtn').on('click', function() {
+        const plan = $('#plan').val().trim();
+        
+        // Verifica que el plan no esté vacío
+        if (plan !== '') {
+          // Agregar el plan a la lista de planes
+          planes.push(plan);
+          $('#planesList').append(`<li class="list-group-item d-flex justify-content-between align-items-center">${plan} <button type="button" class="btn btn-danger btn-sm remove-plan">Eliminar</button></li>`);
+          
+          // Actualiza el campo hidden con los planes
+          $('#planesHidden').val(JSON.stringify(planes));
+          
+          // Limpiar el input de plan
+          $('#plan').val('');
+        }
+      });
+
+      // Evento para eliminar un plan de la lista
+      $('#planesList').on('click', '.remove-plan', function() {
+        const planToRemove = $(this).parent().text().trim().replace('Eliminar', '').trim();
+        
+        // Elimina el plan de la lista
+        planes = planes.filter(plan => plan !== planToRemove);
+        $('#planesHidden').val(JSON.stringify(planes));
+        
+        // Remueve el elemento de la lista visual
+        $(this).parent().remove();
+      });
+    });

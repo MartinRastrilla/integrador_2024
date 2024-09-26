@@ -1,0 +1,74 @@
+extends ../../layout
+
+block content
+  .container
+    h1 Obras Sociales
+    .d-flex.justify-content-end.mb-3
+      a.btn.btn-primary(href="/obraSocial/crear") 
+        i.fas.fa-plus.mr-2
+        | Agregar Obra Social
+
+    table.table.table-striped.table-hover.text-center
+      thead.thead-dark
+        tr
+          th Nombre de la Obra Social
+          th Activo
+          th Acciones
+      tbody
+        each obraSocial in obras_sociales
+          tr
+            td #{obraSocial.nombre_os}
+            td
+                if obraSocial.activo
+                    span.text-success Activa
+                else
+                    span.text-danger Desactivado
+            td
+                a.btn.btn-primary.btn-sm.mr-2(href=`/obraSocial/editar/${obraSocial.id_os}`)
+                    i.fas.fa-edit
+                if obraSocial.activo
+                    button.btn.btn-danger.btn-sm.mr-2.delete-os(data-id=obraSocial.id_os)
+                        i.fas.fa-trash
+                else
+                    button.btn.btn-success.btn-sm.mr-2.active-os(data-id=obraSocial.id_os)
+                        i.fas.fa-file-medical
+block scripts
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  script.
+    $(document).ready(function() {
+        $('.delete-os').on('click', function() {
+            const id_os = $(this).data('id');
+
+            if (confirm('¿Estás seguro de que deseas desactivar esta obra social?')) {
+                $.ajax({
+                    url: `/obraSocial/desactivar/${id_os}`,
+                    type: 'POST',
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al desactivar el usuario: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+        $('.active-os').on('click', function() {
+            const id_os = $(this).data('id');
+
+            if (confirm('¿Estás seguro de que deseas activar esta obra social?')) {
+                $.ajax({
+                    url: `/obraSocial/activar/${id_os}`,
+                    type: 'POST',
+                    success: function(response) {
+                        alert(response.message);
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        alert('Error al activar el usuario: ' + xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+    

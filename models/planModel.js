@@ -14,7 +14,8 @@ const Plan = sequelize.define('Plan', {
     },
     detalle: {
         type: DataTypes.STRING(250),
-        allowNull: false
+        defaultValue: "No proporcionado",
+        allowNull: true
     },
     activo: {
         type: DataTypes.BOOLEAN,
