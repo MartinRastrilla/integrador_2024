@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const medicamentoController = require('../controllers/medicamentoController');
-const authenticateToken = require('../config/auth');
+const {authenticateToken} = require('../config/auth');
 
 router.get('/crear', authenticateToken,medicamentoController.mostrarCrearMedicamento);
 router.get('/familias/:id_categoria', authenticateToken,medicamentoController.obtenerFamiliasPorCat);

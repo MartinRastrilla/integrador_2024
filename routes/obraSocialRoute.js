@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const obraSocialControl = require('../controllers/obraSocialController');
-const authenticateToken = require('../config/auth');
+const {authenticateToken} = require('../config/auth');
 
 router.get('/', authenticateToken,obraSocialControl.mostrarObraSocial);
 router.get('/crear', authenticateToken,obraSocialControl.mostrarCrearOS);

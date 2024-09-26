@@ -253,8 +253,7 @@ exports.editUsuario = async (req,res) => {
 exports.guardarEdicion = async (req, res) => {
     const transaction = await sequelize.transaction();
     const { id_user } = req.params;
-    const { nombre, apellido, documento, roles, id_refeps, domicilio, matricula } = req.body;
-    console.log("-----------ROLES:"+roles);
+    const { nombre, apellido, contrasenia,documento, roles, id_refeps, domicilio, matricula } = req.body;
     
     try {
         // Buscar al usuario por ID
@@ -270,6 +269,11 @@ exports.guardarEdicion = async (req, res) => {
         usuario.nombre = nombre;
         usuario.apellido = apellido;
         usuario.documento = documento;
+        if (contrasenia) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPass = await bcrypt.hash(contrasenia, salt);
+            usuario.password = hashedPass;
+        }
         
 
         // Actualizar los datos del profesional

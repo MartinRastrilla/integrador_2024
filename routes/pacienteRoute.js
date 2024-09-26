@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pacienteControl = require('../controllers/pacienteController');
-const authenticateToken = require('../config/auth');
+const {authenticateToken} = require('../config/auth');
 
 //CRUD PACIENTE
 router.post('/crear', authenticateToken,pacienteControl.createPaciente);

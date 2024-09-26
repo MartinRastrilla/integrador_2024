@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
-const authenticateToken = require('../config/auth');
+const {authenticateToken, authenticateAdmin } = require('../config/auth');
 
 router.get('/crear', authenticateToken,userController.mostrarCrearUser);
 router.post('/crear', authenticateToken,userController.createUser);
@@ -20,7 +20,7 @@ router.post('/users/activar/:id_user', authenticateToken,userController.activarU
 
 router.get('/verificarUser/:documento', userController.verificarUser);
 router.get('/users/details/:id_user', authenticateToken,userController.detalleUsuario);
-router.get('/users', authenticateToken,userController.mostrarIndex);
+router.get('/users', authenticateToken, authenticateAdmin,userController.mostrarIndex);
 
 router.post('/logout', userController.logout);
 
